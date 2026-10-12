@@ -4,6 +4,28 @@ Editor Markdown para macOS, feito para escrever posts e editar skills com
 rascunhos persistentes. A aparência segue o Typora; o trabalho fica guardado
 localmente, como nas notas, e o original só muda ao salvar.
 
+## Baixar e instalar
+
+Baixe o **[text-md 0.3.0 para Mac Apple Silicon](https://github.com/cassianodiniz/text-md/releases/tag/v0.3.0)**.
+O pacote requer macOS 14 ou posterior e um Mac com chip Apple (M1 ou posterior);
+não contém uma versão para Macs Intel.
+
+1. Baixe `text-md-0.3.0-macos-arm64.dmg` e abra o arquivo.
+2. Arraste **text-md.app** para **Applications / Aplicativos**.
+3. Ejete a imagem e abra o app na pasta Aplicativos.
+
+Ao atualizar, encerre normalmente a versão anterior antes de substituir o app.
+Seus rascunhos ficam na biblioteca do usuário e não são apagados pela troca do app.
+
+Esta distribuição tem assinatura local ad hoc, sem certificado Developer ID
+ou notarização da Apple. Se o macOS bloquear a primeira abertura por não
+identificar o desenvolvedor, tente abrir o app e depois use **Ajustes do Sistema
+→ Privacidade e Segurança → Abrir Mesmo Assim**, conforme a
+[orientação oficial da Apple](https://support.apple.com/en-us/102445).
+
+A release também oferece um ZIP com o aplicativo e `SHA256SUMS.txt` para
+conferência dos arquivos. Não é necessário compilar o código para instalar.
+
 ## Abrir e escrever
 
 Abra o **text-md.app** na pasta Aplicativos do seu usuário. Não é preciso usar o
@@ -147,3 +169,16 @@ remotas. Mínimo macOS 14; a versão foi executada neste Mac com macOS 26.7.1.
 testes com Swift Testing. Os scripts lidam com o ambiente de Command Line Tools
 deste Mac, que não tem o Xcode completo. Os detalhes da verificação estão em
 [VALIDACAO.md](VALIDACAO.md); o combinado está em [BRIEF.md](BRIEF.md).
+
+
+## Licença
+
+MIT — Copyright (c) 2026 Cassiano Diniz. É permitido usar, modificar e distribuir
+o projeto, inclusive comercialmente, preservando o aviso de copyright e a licença.
+Veja [LICENSE](LICENSE) e [os avisos de terceiros](THIRD_PARTY_NOTICES.md).
+
+
+Para empacotar uma compilação 0.3.0 existente, `scripts/package_release.py` gera
+DMG, ZIP e somas SHA-256 em `build/releases/0.3.0/`, sem iniciar o aplicativo.
+Os scripts `ui_*` usam o primeiro plano do Mac: execute-os somente quando o
+usuário autorizar disponibilizar a tela. A criação da release não executa esses scripts.

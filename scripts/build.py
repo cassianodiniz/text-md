@@ -24,6 +24,8 @@ macos.mkdir(parents=True, exist_ok=True)
 resources.mkdir(parents=True, exist_ok=True)
 shutil.copy2(products / "text-md", macos / "text-md")
 for bundle in products.glob("*.bundle"):
+    if bundle.name.endswith("Tests.bundle"):
+        continue
     shutil.copytree(bundle, resources / bundle.name, dirs_exist_ok=True)
 iconset = root / "build/AppIcon.iconset"
 iconset.mkdir(parents=True, exist_ok=True)

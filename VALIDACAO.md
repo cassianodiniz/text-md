@@ -196,3 +196,14 @@ Por solicitação posterior do usuário, o projeto foi movido para
 público `cassianodiniz/text-md`. A autorização anterior de manter somente no Mac
 foi substituída por esse pedido. Caches, aplicativo compilado e biblioteca pessoal
 não fazem parte do repositório. Nenhum teste de interface foi executado na mudança.
+
+
+## Distribuição 0.3.0 — 12/10/2026, horário de Brasília
+
+Licença MIT do projeto e avisos de tokenização preservados no código e no pacote.
+A release usa a compilação 0.3.0 já existente, para arm64, com mínimo macOS 14.
+Foram conferidos versão, arquitetura, permissões do executável, assinatura ad hoc
+e integridade da imagem de disco. Não foi iniciado o app nem executado teste de
+interface na preparação desta release. Não se afirma teste em Intel ou em outros
+Macs. A distribuição não tem Developer ID/notarização; isso está documentado nas
+instruções de primeira abertura.
