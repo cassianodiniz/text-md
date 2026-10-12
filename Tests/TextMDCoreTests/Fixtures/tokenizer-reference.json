@@ -1,0 +1,996 @@
+[
+  {
+    "text": "",
+    "counts": {
+      "o200k_base": 0,
+      "cl100k_base": 0
+    }
+  },
+  {
+    "text": "tiktoken is great!",
+    "counts": {
+      "o200k_base": 6,
+      "cl100k_base": 6
+    }
+  },
+  {
+    "text": "Olá, ação, coração e açaí.",
+    "counts": {
+      "o200k_base": 10,
+      "cl100k_base": 13
+    }
+  },
+  {
+    "text": "お誕生日おめでとう",
+    "counts": {
+      "o200k_base": 8,
+      "cl100k_base": 9
+    }
+  },
+  {
+    "text": "2 + 2 = 4",
+    "counts": {
+      "o200k_base": 7,
+      "cl100k_base": 7
+    }
+  },
+  {
+    "text": "---\r\nname: minha-skill\r\ndescription: Escreva em português.\r\n---\r\n# Título\r\n",
+    "counts": {
+      "o200k_base": 22,
+      "cl100k_base": 22
+    }
+  },
+  {
+    "text": "# Post\n\nLeia **isto** e [a referência](references/a(b).md).\n- [ ] Fazer\n",
+    "counts": {
+      "o200k_base": 23,
+      "cl100k_base": 26
+    }
+  },
+  {
+    "text": "<|endoftext|> <|start|> são texto literal aqui.",
+    "counts": {
+      "o200k_base": 17,
+      "cl100k_base": 16
+    }
+  },
+  {
+    "text": "😀 👋🏽 👨‍👩‍👧‍👦 é é",
+    "counts": {
+      "o200k_base": 19,
+      "cl100k_base": 27
+    }
+  },
+  {
+    "text": "\r\n\t    \n",
+    "counts": {
+      "o200k_base": 2,
+      "cl100k_base": 2
+    }
+  },
+  {
+    "text": "can't I'M we'd you're",
+    "counts": {
+      "o200k_base": 5,
+      "cl100k_base": 8
+    }
+  },
+  {
+    "text": "ماذا لماذا كيف",
+    "counts": {
+      "o200k_base": 4,
+      "cl100k_base": 12
+    }
+  },
+  {
+    "text": "защо",
+    "counts": {
+      "o200k_base": 2,
+      "cl100k_base": 4
+    }
+  },
+  {
+    "text": "မြန်မာ",
+    "counts": {
+      "o200k_base": 3,
+      "cl100k_base": 12
+    }
+  },
+  {
+    "text": "汉字和中文",
+    "counts": {
+      "o200k_base": 4,
+      "cl100k_base": 6
+    }
+  },
+  {
+    "text": "1234567890 3,14",
+    "counts": {
+      "o200k_base": 8,
+      "cl100k_base": 8
+    }
+  },
+  {
+    "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "counts": {
+      "o200k_base": 512,
+      "cl100k_base": 512
+    }
+  },
+  {
+    "text": "________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________",
+    "counts": {
+      "o200k_base": 17,
+      "cl100k_base": 17
+    }
+  },
+  {
+    "text": "                                                                                                                                                                                                                                                                                                            ",
+    "counts": {
+      "o200k_base": 3,
+      "cl100k_base": 3
+    }
+  },
+  {
+    "text": "abc\rdef\r\nghi\njkl",
+    "counts": {
+      "o200k_base": 8,
+      "cl100k_base": 8
+    }
+  },
+  {
+    "text": "**[link](https://example.com)**",
+    "counts": {
+      "o200k_base": 9,
+      "cl100k_base": 9
+    }
+  },
+  {
+    "text": "çب20CLبIاب K日>ãçKBC\t本çeAع국ل <C*日2aيdل>_2mBي_IK(I[[本1ãر/ L(",
+    "counts": {
+      "o200k_base": 47,
+      "cl100k_base": 48
+    }
+  },
+  {
+    "text": "e3한語]́AعSã어Cة3KCI(2/한]d][B어2لا국S本한d ر0d/(",
+    "counts": {
+      "o200k_base": 36,
+      "cl100k_base": 38
+    }
+  },
+  {
+    "text": "한لeCا-ةةoCã-)2SB́ع-B국\n)국/m1L0بe 1ب日>日)]CL\t\nKيoLm한dا>本S((本/😀1eaارLا ي2ة국_L3>d/aرر1\tي \tI한9한\t本Am]يd ة😀a本-\nçL]90o0́KKر\nSي ةLL어`ed1😀本>B يرلAع9)어",
+    "counts": {
+      "o200k_base": 114,
+      "cl100k_base": 122
+    }
+  },
+  {
+    "text": "*😀*L0CS_ç日eC日CaSع한oCSã_S\t02어\nB Lر́́`0`<AII어>[></رoا국국Io)ر_I0AA *L> 2/0S*eIo국 aKي0d<\n`B)od(a(1/3>لرe어ع\nmA3Bo日ب oب-oo日`\t😀do\tK S本Sا0)Ĺ0日本ã語K<어日́😀-1B어ع-01)L어국9/-يSa/語́IS B\t1L[S0]3d* ع9語국😀a어e9어IL1",
+    "counts": {
+      "o200k_base": 156,
+      "cl100k_base": 167
+    }
+  },
+  {
+    "text": "Iبem23本Bع_Bا한1\t\n1oK한>2ãa_ةL한1dب*eع>eaLSلm ã]日em>Lã9]ã[Bا0어I[",
+    "counts": {
+      "o200k_base": 51,
+      "cl100k_base": 50
+    }
+  },
+  {
+    "text": "<語بm0d <ç ب_<어ب02dلI(ã`CA/[9CCç어A)_2Sة2[국\t)ا _çL1 日1ãI本>[ر->本\tL(́A1ãع>a😀 اربب어A]>S어_語-어Lر9\t9어<-)ل3eLA<어(اب 語́9)ea93B>日本국-/**اB\t`بd어K3\t어한語_Kي0ا9CAmçã0`語ةS/<한́Aعل(\n)0m국لaيةIة>C ل😀/oe0L/L/어😀e本-ي*語ر\t>e*dب`*1ي0한2ةة😀\n한02*Sع302_- KLmC(لmعBS<<_ /<oB<(ة日لçي́(`a[9ي(< بب 本C\nC2>\nç(_어ا)رd/L語 ç)日́어çK",
+    "counts": {
+      "o200k_base": 230,
+      "cl100k_base": 249
+    }
+  },
+  {
+    "text": "L/ o1(-B/-_ي(2ي<1K`çب o[C국Sة국ãيç0Aç語m0L`어ĹB/ل1ة]d本本بعLةd9I日ç9́ا()عAS日ل한0Iلة9ا本Ĺã[ >어]S\t국_a<\nI>]한/عm> ر😀국2語 ة`/>ر日2-0K2*0ي/́語어(_ç\n- \nB[1_2本ل2ea😀AK0ر<\neي0ل`국ع\n*çK3C)ل09어日]`e😀[>بe_[ل/291CLرA-Lب يل ABب`2ر日ي😀本3IA3C] 9aع L2ã",
+    "counts": {
+      "o200k_base": 188,
+      "cl100k_base": 203
+    }
+  },
+  {
+    "text": "e3لL한ي\nIá3``*_ o1`LS)\nŚ한اo",
+    "counts": {
+      "o200k_base": 22,
+      "cl100k_base": 23
+    }
+  },
+  {
+    "text": "ḿ9K0Leي<本本語Cة😀(**9日>9́語o語بIيB한B1어Kd0 eSda<*ل本`3ãC3ع3ل/SاC1한日어A>L C국m2mSod9本ب́",
+    "counts": {
+      "o200k_base": 68,
+      "cl100k_base": 73
+    }
+  },
+  {
+    "text": "*L/ل9ل)2\t \n*K本ã>ب-本1çKCا́日çيا2́ãيي `😀국*2 日>한\nK`[<_-어Id_<ل\n3어)يeã/K-1-Lة)\ta어 /<oA😀]語ي\n한*يoB2eL3*ل\nLç한本0عd9eae<KCL/L국m\nع3\tع2<``0/em(A本\tبLS2ة<_\t2a3ر9日日",
+    "counts": {
+      "o200k_base": 122,
+      "cl100k_base": 129
+    }
+  },
+  {
+    "text": "m* `[_eي (/-Aل0́(Cة<ã-ب`ع((어국m\nãL\t日_I*I😀/aرm<국mS`1_語ل)국K_ا (-한عي\n ã語S0한ا3CبK>Iي한عI*dل9çã-o3[]>m0😀<́ا d K語(語ا0\n日mC/한1/1어a/3ا dS*[日9한>ل1/9A(`I0(́[́3ل3ç어)2áاةبo本ب\n3ةC本[C한A語1ايرة어اL한I한국ã9*ã日]رLK3-ب< AL ]😀\t2d1`3ب_L/SmيCارا)e]K)a1 L/]ابا1日(한]IاC`ç語e-語C국S한/",
+    "counts": {
+      "o200k_base": 213,
+      "cl100k_base": 233
+    }
+  },
+  {
+    "text": "국<LLãã9\nLI0 L(/]어بل <日برm<국I\n語<2ãل]B**0]Iا] 국[o)2AL/K어B국한本ço_0ĹBSيeB日BC_ةm本a2mL 1 L어çLa[0日-ç 1oLب<😀LبS`*ة]\t日I*\tC語ãر어😀9/국ço`)>اI\nع*SK-本mSL2語한日eع-(本😀3/\t本>Iل",
+    "counts": {
+      "o200k_base": 131,
+      "cl100k_base": 144
+    }
+  },
+  {
+    "text": "국국ةeرB>*C<_/)<رI->-어1]mا`SKKK>Iبب]Leo日ee_어L<[어ي>رo3本9[Í\tBm",
+    "counts": {
+      "o200k_base": 46,
+      "cl100k_base": 48
+    }
+  },
+  {
+    "text": "CI[e]Lي2́C>eة語語ا국eç本어ل2ç 2لي9_[a ḿ어)Smب한çKب😀B(</_d]9ر-ة́本Komdي語oاK2*어>\n本*<2Bي\tL[>L3اا日\n😀어9ãC)本oaB9BةLي13-La\nب> L( عC\te어[S)بã>ç/S-́>́)ع한<3L)ç-d語/ل]K>I0>日)😀K)9ب_C_ةdS\t한L😀\tAة[[ر국m0Im1A 本mيي국S ة한\n/ي́ي日*ا́국한語-한-m*S`*한92日o[\tS9/*ão]3S국K語本\t(/日eبã*́국A-本`\t",
+    "counts": {
+      "o200k_base": 212,
+      "cl100k_base": 230
+    }
+  },
+  {
+    "text": "o*I_عK\t국 ã0ع**😀😀語d]]3(<ة_ا本o한국_S_Ieا(31ر어本m_K日어m[9국ل어)L本عK9e(국_L어لبا😀K국어>\t]ç]9",
+    "counts": {
+      "o200k_base": 67,
+      "cl100k_base": 77
+    }
+  },
+  {
+    "text": "B_ة\nACLmS3I\tة ب😀ã어_ة語L本(md لة語dر*ã<]ار0*語3يب*C 09`A]ا́*/ة3ة(\t😀<dA本L1o국`]eIع😀L3Kيd2*\tm>KC*[ç<o",
+    "counts": {
+      "o200k_base": 78,
+      "cl100k_base": 86
+    }
+  },
+  {
+    "text": "\t]0(K]Cç-Iع국_mLã3`لLيع`*語aKç1Bmeر本😀>Lة309Lo0<한語/SL\n本 ç한\t́0عm3>a語[0́< 어어K😀]S😀 \t\teç(`ã한(]1بç[S[0ر어한Iة日بي_Lã[ _국 ةا/ل`한 LSعة/ã3AãAã-9\t) `1ãي국A3[ةo국_2L]>)ب*(_ \nل\n]😀2Kر>K>本  3-IK-어39*本ع>dل*[*ãر[語>2한oS어한)]\tباd",
+    "counts": {
+      "o200k_base": 170,
+      "cl100k_base": 186
+    }
+  },
+  {
+    "text": "m本ا*ãLS0ة국]](́ã本",
+    "counts": {
+      "o200k_base": 14,
+      "cl100k_base": 15
+    }
+  },
+  {
+    "text": "ا*]]*يŚL😀])-국20Lçب \n😀(eL1ة1ع*B語3ل\nALLS* ع*Kا-어[عSe 39dععل한 ]\tCLAL0\nç]é]/eL語KS",
+    "counts": {
+      "o200k_base": 62,
+      "cl100k_base": 67
+    }
+  },
+  {
+    "text": ")عر`😀<ة<́SL-국S*/ا😀[Lةe한日 ةL>\toL😀m9dd-عC[😀3K1A한e2L한9語 K\t국d日日md어語ر本_́ãçKã국ة́1국Bة́<語한ç\n한 3국9`0ا)9/Sلod*<`/B_本m-ع-ر[)Lي]\teI-0/L2*0mIo3(語<0d-́ر-Aيd\n\t/\n9\nçK)\t/0B日[oo",
+    "counts": {
+      "o200k_base": 143,
+      "cl100k_base": 158
+    }
+  },
+  {
+    "text": "\n本국ا`3 aI>L1ر]ي)]ã)óeA]e3S(\t*يe2語ا語LLI)]_e]يmA本\t)\tãããLع_`😀/m本\tL-語-d)語ب9日_\t\t \nع́9`ç]_اL<日9رل한ç本`1국ة日́Cرo日`d😀한ر語ة(mا0ã́لLAç*-<m<لB<\tة語`برoعL😀Be-어`",
+    "counts": {
+      "o200k_base": 127,
+      "cl100k_base": 139
+    }
+  },
+  {
+    "text": "(- / _ [اةرا국ل1語`A02e9C9ة3عBلع\n-`[eر23Ĺا ()[ةm3ã3عK[*국1ب`BA 2eل2LI語ب日00o어😀C한CoI<_ع`IاةLaed<국``국Aي3-3국oةK국́C برã < ã)\n ب3ãa9́本I_3/국 😀\nL\t/2AL_dر/국1ع aب_3́ايA 語한)>\t-K)어I L`-0a1(0*ي2_9日ر́a1국]ل0o어L/9d)ا\tعة9لL한3]語CCL`m/ب本]<لe`ي 어Bي0اي本K😀*😀ع]ŚLoe\tÁ md-😀*LاBع日\nK\t*o/L\t</́oe/ا",
+    "counts": {
+      "o200k_base": 224,
+      "cl100k_base": 250
+    }
+  },
+  {
+    "text": "رç)1aبB日Sã>[لS oS`ã3< ةLة국ر국<](*((Kا어 L국[L  )😀LرCaيç9/ار > (C0/[m2AريLã어<語ةç0BSI本ã*本اعo0بã)*C BيةoL\t3Cر́-́本ةا-09m어😀C<92oe日ب 한ا>e\no[국어(😀-ل<<m9( ي `0C9عm/oe<<e😀",
+    "counts": {
+      "o200k_base": 131,
+      "cl100k_base": 141
+    }
+  },
+  {
+    "text": "(01B_국K*]K رAo2(ا本本ãSAي日ر어eB`B_9aBAبLبي`0ل本عB)0e-ة3(/ 국[91]\t\n/Iر`ي-B]",
+    "counts": {
+      "o200k_base": 57,
+      "cl100k_base": 61
+    }
+  },
+  {
+    "text": "<ã́Cبmç1e日日ر<3mA_C(́0\ne국ا_1ي\nر국ب\n/dر[dLر \n  국o😀ãS어oيa<L한CSعmaB\t/]o語한어語`어\nça e<aç😀ر2 3ç\tلا> II😀m0A語😀1[2)K])/́0لC9اK국국يãK)((e`o한aلdK\n>국_́I😀ãCBل́`2ãSا2 ́어ã -çB日mيع)",
+    "counts": {
+      "o200k_base": 138,
+      "cl100k_base": 154
+    }
+  },
+  {
+    "text": "9d́0́(ا _(يبLلرK\tب[oI>CS_本ة語本)ة-ç한2*\nC[e",
+    "counts": {
+      "o200k_base": 33,
+      "cl100k_base": 35
+    }
+  },
+  {
+    "text": "> ا日어(Kة語30عSK2m(ع한mب(-]IKa9*]ي2ILK >*ee\t<IçK[eK本本-(a3<(ةKرe0́😀dا(dL292\nmSd>2<9`S]10ر한\n本語A/IL9a)_語(_*_>국本L9-本لA`- )-3بل한\ń0-(2)]ĹA日  اةeçر/عB*3لS<ا\nL한901어mع>(S*本`日) \tل< ã]ل 本한KIة0어어[d국語ã́국ا국)ي",
+    "counts": {
+      "o200k_base": 160,
+      "cl100k_base": 172
+    }
+  },
+  {
+    "text": ">IaI1C\tب😀e日ل́C*])/ةا日ل\tm[ç`I3<KLرm[9_/B😀`[`I*رل*-S9ãعLç_국Iاdب0😀 ed_e>/C)한  한어>)çب語A*日>(aعBB2يعŚI  ]-A/L1어\n😀한-本(語)日L[[/語 اع9語日KاL-L09L ]لm\t(<本Ĺ(> \n한 ل국 ed\n3L -*語o[a\nLA(e",
+    "counts": {
+      "o200k_base": 134,
+      "cl100k_base": 148
+    }
+  },
+  {
+    "text": "국\n<ا\n<ع*\ndḰçيC3ã2C 3dة/́بةة\ne\tĹL2ة ] يãير* B>Iب국ي09ã*1[K*Lة0Bب日ل[ع語한>d語LBBó[ 2本 d-ع33́2\tاILي<o2국LلL0mع-0يا)\nḿ한2한<(*S한ةK)\tب2ل]/\n-日aةرKر/한어ل[S )B>B\n2-3_éĹ\n_ايoãI한/çLd*/a>AلL국9d2K국]1K]어국do)한9رليC>국KعIaB`SL日C😀ا*aaل_L>لL`SC(KرII-]9L(ةيL국اmS😀́a語국d*[رB한بm<語ا*B",
+    "counts": {
+      "o200k_base": 221,
+      "cl100k_base": 240
+    }
+  },
+  {
+    "text": "ILيL日ر([>-L02국K0e本本ر本3ةلç어9B😀本\tAب)3국o0\n(L0\n한本",
+    "counts": {
+      "o200k_base": 39,
+      "cl100k_base": 42
+    }
+  },
+  {
+    "text": "😀a]-L(́<] ا ي`ةSç日Sa1Bão)\t3한ع\tة<>ل)K한",
+    "counts": {
+      "o200k_base": 31,
+      "cl100k_base": 32
+    }
+  },
+  {
+    "text": " 語m2K9K\tBm -)日한ي국ا국S9ل>ر0o0K>L/語本o9어ب어ب LaعLلad\n[😀😀ر1d]Lبة2رLةç_>2😀S1ع́한S\n/\t]o\ńd]d1ةÍارLCب\taãa0ã`](m ãeعب국<C-0<ر-2Ś]L\tاo C😀ã)S/3ة9-Ke/a]A3́9ب語0/]日\nةةAر ي0ma<çC [한لa_aي어(بر9IB😀0<\nomع2KãC😀<ل]/بK日I\tL한)S日́o>어L031-)لب--*2CSALةة日ImId*/-<L [ةB*9/1LKdا9عل本ãB-mKع0[)\toا91 ç)*eبe0I/",
+    "counts": {
+      "o200k_base": 228,
+      "cl100k_base": 244
+    }
+  },
+  {
+    "text": "LLaoةCLA)]ا한국K日日1SçSA국*LK_Lã/od́>ر)\nç(ا> [B 22*mã語語語0",
+    "counts": {
+      "o200k_base": 38,
+      "cl100k_base": 45
+    }
+  },
+  {
+    "text": "\n<e`oK2(L<A국😀0한 ç(ع[` \n[́\t-(2 ç-本Cçة2o`😀[ة日CdI0어02 بoيĆ([  0日-بل[日çعل[́́ḿA\n 9 \nãKoC本Cç😀`a_語AL_ع -oçm日عmةL😀]S]ع어)日I_9-Ldر>한\n국- عeل語[C어日 (9رل3L رaل́)ة́ã",
+    "counts": {
+      "o200k_base": 129,
+      "cl100k_base": 141
+    }
+  },
+  {
+    "text": "本-語C한́I\nm_بS0[-d한Kع어한ر_*a1B0لS[1Iرao(*ر<d<\n([ (I`́국ياCd*Sã3ç-1IS_d(dرSeK_本語`عç>국d本>doI_BA<لeرر",
+    "counts": {
+      "o200k_base": 78,
+      "cl100k_base": 82
+    }
+  },
+  {
+    "text": "1어390Io)́e\nmo]a>K3어한本`AIçBd한3K`L9)`\n어1K국 ( ](] *ã1*/1C2́omيل어IK어[ <ي日Ceo(😀< ا`́0`9K)عã\t́😀́ا語mLي* dBALã>Kا>A한m本1-رSK(e)e-2😀/aل語日😀<L<mḿ日日يIÍةI3 [<1(국\ń本`ã 2)m語本ال)ã)_ل0oب`2]ç_992\nلاICL9ب*ة-2ر<本국KA*B<ب\nي😀]o\tdS9ع\t)Lة😀́ç AAo0ã/o]عA2]/\t)한Lاç0]\n本* `日e[[d1بلK3ç(od́ةBC국CاB2국<\tçةةاa`L",
+    "counts": {
+      "o200k_base": 226,
+      "cl100k_base": 240
+    }
+  },
+  {
+    "text": "本aC1本9عع국2>([/1B/9ا😀語)日Ia\t어]e국本本39اI`S_2한-21국ع국9Am😀ي0o本)어-اLرç국\n31<)(بã日ع́A_رعCا 한`어[\t9d어",
+    "counts": {
+      "o200k_base": 80,
+      "cl100k_base": 89
+    }
+  },
+  {
+    "text": " 3I`Lب1رeي ا_국KC[Cب9<_]1日3/L`o한日日語S`A\tLا(😀9<omLA_<́/m-ع ةK\n_한 -한oa*2Bيةd́يd\nيةKL語>한>)>`(aã Aر]a-ي😀Açاa한ر0Cل[9LI(\t日9dSã93/ر😀本😀_>اL_\n[يAd)çCCرLBرç日\tdL]ع국ã(한1ة 語o本o어I국çoلL<*(Le1`لmBلا한a9<어I어😀2語本لL<I\tر語L3LI\nA本Aة1😀A[ع<3dãe\nBل`_0aa어KĹ어\nmKة\tSررI1국C/31/oI ã3]ا->بLIيãaL어국d_[*語2رK]_ L))/2(ل`<국d",
+    "counts": {
+      "o200k_base": 242,
+      "cl100k_base": 262
+    }
+  },
+  {
+    "text": "LلرodI<日`́ا* 語(ة[語çارL`\nL<*ãS1국-aعا😀ةب́ر́C어_😀😀لل語I>어ر0`[어ا",
+    "counts": {
+      "o200k_base": 52,
+      "cl100k_base": 60
+    }
+  },
+  {
+    "text": "me語oa국d\t`\ndSي\n-0_2o\tCe국()0K/*́*K\n*-L\nب국çI)<ãeeaK本語한9\teB국어/_]oC/_eة語本`ع어]ع*LIي어Ca_[한3e😀]لIãd\nLعبر<I1語AAL)B/Aع_Iي<ã한ا日Lة*/어日\tL\na😀بoe>日`\tة ل日 رLI(어本本-\t(<本لي02)_3*LL<本لب\t9لe-عبe한BAB語ع3ا[اLع국 \t ل한-عLي[e`",
+    "counts": {
+      "o200k_base": 160,
+      "cl100k_base": 174
+    }
+  },
+  {
+    "text": "́어ع<اب 3>a😀Iç(mo어oA2يd3ا1moل3Bي ã[*I語ابeCب국e(0\tل3ل어o((<ا-eoaب1A語ة*C한عع국]ي日 ب本AةرA3* اS  ب\tL(ã>2e1Ld日1a_/عmãm-本oة한語어9\ńe[Sع-😀C 😀S\td<  )K[CB어__]3Bي語😀`eي국aL어[*0국語語0ãا-(L(1 ر3ç😀ة]\t\t*\nã3국A-\tKIdة  a한SB어한ةBا>IB لبة>국Sباmç/ع_ãKSo 1eŚC1<(*한)>-ç(اL a국ر語Sيب日ãلS[\tI3ا9本K3ي*()어ç`d CLب) 3한m9ار국]aeemLãá本) eK9Bبب",
+    "counts": {
+      "o200k_base": 252,
+      "cl100k_base": 275
+    }
+  },
+  {
+    "text": "B<국\tmd C語1AL 어́oيe/국eS3어S1IAر日\n_[L어국0I3語SA-\n*_語어9ل日ḿ́]->da-0Cعب국>2]Lار_`/*[ة9\neI 국本K2L A1ر한SرSç\t한ç日日)ة日Bãe1  `국ةm])Cة日ر3L/\t\tK)]\ta어0語اdي\tL*d ́́어mبر`[ãCي\nCS1]Cã어B😀](`/ãã국-Iع😀한2ب1",
+    "counts": {
+      "o200k_base": 145,
+      "cl100k_base": 163
+    }
+  },
+  {
+    "text": " ́ (국(]日국S😀1(C😀)[[\n`本a\tL*dCS\t국2Bm d]本عL어C<_رL`ا``B日d국<ç0ãĹ日dL한\tã́mod1 😀)本́한çرر어3KB*本``dC<本m日ة 語어\t1dرا_/本日SC((LIçA😀\tا<m本I `語本ã \tيLK`어L本 aةا국>😀<]ãل😀>C`ة([日بيل́I>L1`ةCK3本 <1Aaعبá😀L😀a(국Bل-<]Im>국日11 >́]語2ا)يB<ee` ]ee`19́[ةع)بL어LبC*لdIB\t)_e語لاعod(한aKm`本>KS1C]K本ãر()語국😀3ع本oة 한\n*aA어😀3Aã本\t😀لC語dاã]0국adK2ة",
+    "counts": {
+      "o200k_base": 247,
+      "cl100k_base": 278
+    }
+  },
+  {
+    "text": "[어))日A😀aبعSKe3رe日[[2C本A/)́a1 <\tIeS\t3_L\t1 ́1ل*(́`ة0ي_ة/ا/日ç`L1S(한CالC-<[😀 aل103K)اب_Se `-[B́2 باA\nبA0ب01BCA0語[mةILKا어\n語aي ã`]語-\ń2\n ي\t2)Cي́Lo😀>` ã\t[)اة /Lل😀/-لaaاB(日I-]語1 e102`語_] \n>B<لي]])2* ́ĹاCIر20e>(Am",
+    "counts": {
+      "o200k_base": 158,
+      "cl100k_base": 170
+    }
+  },
+  {
+    "text": "`a <\nL한😀 ر-\n91éo)IلdoB1`한I*ب_1]]ee1[ç<L[ا本Á́국국  ة3[-ا\t\nةب*K(語3/한md한_<한語́)SK",
+    "counts": {
+      "o200k_base": 62,
+      "cl100k_base": 67
+    }
+  },
+  {
+    "text": "_C--국3ع2本국)2*ة]ب日😀*<d çLر0어1بلبKBd)IIS`eoçة)😀يKI1語mK국(9C0ب3*한LL😀dçã어[-`/ 2e*Lل  日本/",
+    "counts": {
+      "o200k_base": 71,
+      "cl100k_base": 79
+    }
+  },
+  {
+    "text": ">😀한한 9[` CK*9]<1m9aa😀يL[3` aل\nي`9aة>3本Cae]A<e>)0dعب국((C1K>한0😀ي語لا23국ب 2<AS L3L한/語*2ل語\nA-çmo ç I32Lع*رaCKma\nB_<9\n]/لã_Kيmo2ة)S ` A1(aLةع0(ة*0بãA/بةI😀어B`(ا9-d한رãبe😀L1`한9A]o어BL0한>-ad2日L)0aã日ل`ل本m]ةK0d\nKا語_ي한oo[국mل IL\nC-e국ي[*رAçل([رL1ã\nع*e3 ل\nÁ  [-ر/2本edS😀m*31 ]/aة한\t(ر ç語]ة語0-رS어 (A😀ا\nةem語3-",
+    "counts": {
+      "o200k_base": 242,
+      "cl100k_base": 260
+    }
+  },
+  {
+    "text": "국-LI😀어SãL ãAI\nAIã́국(어\n😀語ل日1o]C本عSaB국\nK/한o]eب<]عo語2😀ãرS9SB😀IIرC (AA😀어0́한 eبe<بIة한́[ا/ل어>Id e)\t_어d 本*[-e-]<ي한>ر-本0́ B(ةeب1]**)aرã3本ç😀L9a9CB-çةل2e\té́mIã/[mL1]日0C19Ḱ)́BرSر-` \nلل́I本국9ãر́(Kةoة_[><LةCب국本a한ة한(o9😀ã- ́",
+    "counts": {
+      "o200k_base": 183,
+      "cl100k_base": 200
+    }
+  },
+  {
+    "text": "-\tلCmoار)*ي本́\tKC>3)mL_K`́بoe)1K)\t>ةلLيL`eA\n)국́Ae語ب😀00S2ة>-ا́KL어<>][A-[本국çة9d[",
+    "counts": {
+      "o200k_base": 63,
+      "cl100k_base": 68
+    }
+  },
+  {
+    "text": "語m*ãCAا]mيرKLبo0語m3a_لL9*`ç_Bب BB 😀ي1e`語رmلل어ç(日어😀ã1do3Aل語2o/국aS(어2어어]Iç3국(C(\tعI-\n本 K A\t/eعçã0😀9_\n)بdç[ا[[한90\t2o한1(çe2Cm_)어LKر(😀ا語한اC<0́m>9本_* LB국L日 اAL9لع😀L>ةm국́d-Se رL -mرçي-<<9*ب한ب2mةAIL çي語語2本́語C本CCاç[Kلة`L\t本`ع국] (\n`LdACã<ي",
+    "counts": {
+      "o200k_base": 184,
+      "cl100k_base": 208
+    }
+  },
+  {
+    "text": "2<Cب어AيB",
+    "counts": {
+      "o200k_base": 7,
+      "cl100k_base": 7
+    }
+  },
+  {
+    "text": " *語\nل-/0>)ةã本ب(ر-)語ب́本 😀국عã😀I*/ã0😀",
+    "counts": {
+      "o200k_base": 28,
+      "cl100k_base": 33
+    }
+  },
+  {
+    "text": ")بãe(😀ي한oA3*)9ة3/d>3語oل😀m/국*Kر\tL ة日ل L)<-*ç /日عA/K1-ل국عdعرLKLع*한]K😀ع(ر\t語d(e(ãةd_́어mdm ةعo<99رة*3한 LLAa語ي1a/\n\n a本\n0B日어`/<*K本本a0e2語한eBo mo국[ãmã어́本9_KoI< dا3語어لل本́e /ب日]ãKة9-](Sي>eS3`LLل2_😀<😀BلB語oÍر한😀K`رل本ع3>本-1😀́語[L語́\n😀ر한\n\n 語Cع3AaLç/한LبB語<<ã_[e한Ba한Aل31S99\te-ةaLا__)ر́語ç A__ا``ã",
+    "counts": {
+      "o200k_base": 230,
+      "cl100k_base": 257
+    }
+  },
+  {
+    "text": "`m한/ _/<بo😀9́را-e çB́ا_[Sm2ç_(한 d́本( 本Lي9ع-عã2<K\n0]*9B😀9 L]ãةAK*\tç`\tmA",
+    "counts": {
+      "o200k_base": 55,
+      "cl100k_base": 59
+    }
+  },
+  {
+    "text": "`ر😀9ة-mةI😀اLBرã/(ع😀La9ãا本K_/ãI😀ة어ب9ḉي9한B-AA32 -ة*어L2md2La語e\tIB [e-2mع3́0dS9語_ *oLç`اoI(oK>) ع本日한لل*語[9_Aعي어 Kيي/́LKل/I/9ا국عة/`CCm語1]) ل어_-/\nçS`L[`/d3ة[本́L\tI)عI-e국S9 /)日<0語0ed",
+    "counts": {
+      "o200k_base": 140,
+      "cl100k_base": 155
+    }
+  },
+  {
+    "text": "(S_Bل日>>́_ ل0 어어Sبع́\nL日本/-eI* 9)S本Iا本ة(-\n국어oKBL日ي한aيm어m* 3(語́*ABا-9́ا9>ع[K日a語\t)L3o]eoaعe[L3ç0>ل日)한-ع()(> B어 `LAe(]<m3어LLaS국çmر\n어>LKL국</ل本>語 /\t>e*([C >本á\nر0ع\t2< ́]ãã́`ع]L日`لKmرر😀ية2/😀K😀語K0`한ب어어Sا한 日9語o_ ةa`/\t`́ر_<[33dãل本ب9ر́1o한`日d́o어3ب語ç3\nKL\tS21L語",
+    "counts": {
+      "o200k_base": 211,
+      "cl100k_base": 227
+    }
+  },
+  {
+    "text": "21aبL本 日بm어*] 1ل0\n 😀ã_Km本m\nي<ة(0어*ر한dB́ر[o국1يLod/)`9`بي C(اع(`1m😀>a3*(ا-😀اãI 한[>語국2_22I1국日)/ةاب0را日ةA😀_ال -eaاaSa<I😀Iا*[Cر31Aãç語Ko本어B本한LعLK本L(어ي",
+    "counts": {
+      "o200k_base": 118,
+      "cl100k_base": 130
+    }
+  },
+  {
+    "text": " Lل 13/어S한/2ة>ل어ةة-1dةS2ةo((_o11 *S\nA語) 국\nIm ة>B語국I*ع1IãSŚر1ة*ç\nm국한aã어(2mل_)́a\tعة\n`>)رةS Ca(لة`Ĺ [_ا9)o한국K] _K/ية3국A eã(어A9ل(I한ل[\nK한*بALãAçر日0\n(S 국9\n *çã_o_رã)LB국어😀/ا mب日CSãبm\n국ç`語ã0ل국La 한o9I/語d日SIL\n本語CSA>_با)-Lا́ L-Bيã日 _SL2mي<dل]ed*0日ãLI한語(ةdç\nKaa Kع국日3<لة`لLBm한2😀*<0 語لã本 ع\n語K한9[<ae0AL",
+    "counts": {
+      "o200k_base": 236,
+      "cl100k_base": 263
+    }
+  },
+  {
+    "text": "I語]ي \tC/ة한어B2oALmا`\n d어ão국]3B>1_語ي/ãIبo  dç\n\tLS0ر*日日-<Aبا-CةL-CI0ب<A(CS`日\no>mB語/ (]L/رA한[2A_Lãل́o2LL//<dي_C3本d한語d́eCK<😀\nB日`/2aر>ب00->日C日ḿa<ãã`رة\tã>😀)`لI*\n0Keيaلر<BL[30국Kç`어9dع/́ب日ç//ةLع) ]한/ع한a한S(ل_😀ã3>ي2ل語 ́BاK語_بo\tا]oL(]/語ã]] 국eعSeعةBL_0 L국`بي日لBيبيC-[2\tا>2oS][*\n\t😀L`ع ",
+    "counts": {
+      "o200k_base": 231,
+      "cl100k_base": 251
+    }
+  },
+  {
+    "text": "3*語]الSA/KK) 3SId2Lلm\nmB😀한ç3<ا L`[<*ب국ç3ASçC😀국_<日_국국-\n日어ل😀e*/9́L9d1C`]3ةom[3/d語dع 3  عل어md0Lã-́L*1] Beعã어-[m]* d 9Lç)\nةm/-maب \t_국ع3`3ي́어ḿر*_لLر`ãLاeL9ç)語C*[K-o本국A日😀Cة2AçK *ا어K\t)A\n-本本\to어])mع>](]a3[[9*eKBر*ب<*3dر>ر<L日本KmB9`😀_S日ي(Ka<한2< e/ع́يLA (3e\nã9日9\neب/Cçam19한한`L국어3< \nل국",
+    "counts": {
+      "o200k_base": 229,
+      "cl100k_base": 246
+    }
+  },
+  {
+    "text": "çLي2\nS本ب]日`́>1한ا`لL]\tر́ç1d日om-/لL[do2]<한[o33😀한S\tAة한 يI本يd --ا92الل]I 日[maL😀3]ة\n<_dIBm\tCAe語ل😀 عeليL</SLLç`[9ل]L*本😀ي_ ع9çبLCLلmل",
+    "counts": {
+      "o200k_base": 102,
+      "cl100k_base": 109
+    }
+  },
+  {
+    "text": "9LBLK>ليLSçة`ي>ãAIã어\t日o`L1ãS9어aيIL本B日A 어[çKmب2日[[d\tةر語0\t́SI日يa😀BعA3dي aرIB\tع`]ل日 *اI [(>B\tC<Lي-L/L😀L\nي]ع3eرãK-\nL(3/本ب",
+    "counts": {
+      "o200k_base": 96,
+      "cl100k_base": 102
+    }
+  },
+  {
+    "text": "ا*Ce<3>AS`ا] aا\nاI)*😀어اKLm))ل日IبdS]A_A本)LC>ر\n2يعة日日2ي국)[`어本)\n\t2mة/IL1\n\nC한LçIبoS\nاç (本ا-m9語語IيS어ي😀ة\n/A3어\n\n\t1 _  çيã>L(*-(*/ãã e어ة9عd\n>L9ع(\nيĹا\n어eا ́``ed\to)1\n日(語",
+    "counts": {
+      "o200k_base": 130,
+      "cl100k_base": 137
+    }
+  },
+  {
+    "text": "ة3-oç日ãL][ب日çي한_(I>[[<[o어000국9日KلS9L_dç -ã/어>́\t<2çل`日ç-(́(-́I\nIلاB_\n\tي어_d語9]>A\n한S B31o9́)C語بKع日I日_2Ś😀`>B[S국9\t9>어 -A<)1語\t/어يe ç한ع😀 ́\nB어ب/2한 語ة>́ر한o😀A]/m0mباي9><-S한B<23국d1ا本0)0LmAç09",
+    "counts": {
+      "o200k_base": 155,
+      "cl100k_base": 166
+    }
+  },
+  {
+    "text": "\ne>>국ãAd2Lç12어e 국ãر\nçoK-本9S<]어어K)رL0Ĺب\tL😀어日ة😀1\nK0本Lة-_日ب(بب0>BmI B2*<1日o\n ]لL- >`ا02m]`ع]9ç국本ãب어oل어01e(9한ل]اL 0*(a)19Kي09Bd*한-ة국<ã2Kة\n`ب<_ع>Idل1\tS[<本رeب-/لçيo국국 한*국La)A한9-́KLd0😀عة국يL本ا<-*`بL1 ا日-3AK<] )(́Cççe국語한CK/A1لdo)語>本1mK]d́Laع😀>ة/ا",
+    "counts": {
+      "o200k_base": 203,
+      "cl100k_base": 222
+    }
+  },
+  {
+    "text": "LCعBA23ب\n(L>B本B3راA< <mç310語*0]日ا국/Ka`L-ل)اBع(ع>ب本1SIeoo_0`[本어本عبãa1\t語(9)어]Leã日 1d\t\n_/LK-ع😀>m1L-ãL\n2ب]>31語ي1😀->d-ب\nيme어한*oAmoC ã`1dع/>L\nã*[عe\n/\nLرmL[KB3 dب\t2́어日B日a😀ة́ <S0ة\nاI_ç3ااL)]日I-mçK/ع어`/한2本어a_ã국語*-رر́LBo국3-oبSe本(K)1 0ة)KçBd(ة)3국ي국mL9\n>ب9ا本L[어I]\tA\n",
+    "counts": {
+      "o200k_base": 217,
+      "cl100k_base": 232
+    }
+  },
+  {
+    "text": "(`2́本>Kي>]語 >한>Kã\t_/اC국اعm\n😀한국😀K3/>K`9mLا90😀>3́oeSã\tI\t><I/어ر́1[1日Kة\tçLب어/  )ãK<ع9-日ر/ي어*語1_ B Kب本1اI> ça)Lad국`/ل)어ب本ر\n9語語]لالا)9KLLaALçلAçB`국m국0>한 AK9ة/m`>çLdmبل*\n`ç*日0A3́)o_aI한ع><\nب日本رe3ã\n)\n\t日ر語ا\nCعo😀ç>́-eS2국<`L\n語국[*ل>çd3رA`[*C\t",
+    "counts": {
+      "o200k_base": 190,
+      "cl100k_base": 215
+    }
+  },
+  {
+    "text": "日ا_本ع어/L3رع(<ا국ب]`d語B3لبK어`L Ad本\nI<\n90Beoç[1[اd \tãS_>L語CLeC\n1_[ةãةe2mل\t本어Iعo*/يLI語語Ieã\tId한LB]dر3ع*ي\t\nرIm국]_LLA*<ة",
+    "counts": {
+      "o200k_base": 93,
+      "cl100k_base": 101
+    }
+  },
+  {
+    "text": "0`_3",
+    "counts": {
+      "o200k_base": 4,
+      "cl100k_base": 4
+    }
+  },
+  {
+    "text": "dK2]عي<]한어0mيي😀<CL><</😀ا]ç*mةaع😀SK_-)ةd>o)يã어국ḿo한ع어😀3<)الe9رب-[a2😀語mل)*국B 語語국*ل[국)ةA9Kã _(رربL😀 3BK\te9😀_ي한dçç 日10ة9ر>\tLرo]1한\t[Loي국L*9́بa/_0ب日́ع한어 本C[93어ع́اLع(😀ب0I-😀日Aة]/Imع><KKo>L`B*S]ا😀)日e😀ة)1日\n한>*ل\nر<dm\tL\nع/Lع\t😀LلB/`ãبde]L本<LL]́3ã😀mL]9]93\nçmm日<o93B ب\naLe[S",
+    "counts": {
+      "o200k_base": 217,
+      "cl100k_base": 243
+    }
+  },
+  {
+    "text": "<`́9́*_(`ر本LيL\t한/ي*어*mر",
+    "counts": {
+      "o200k_base": 20,
+      "cl100k_base": 20
+    }
+  },
+  {
+    "text": "K語어語<(C)_ ã어*ب2국Kdعḉ한ةع9e국L국eKA語 ́يó😀Aي`\tçL어  ç2B0ع日*K 本-)日ã\nç_> <ç😀-(1KLI d3m 1ةKm9<اdo語- çعo9(I-m<-1(LoA0ي本日0\n\tي\t(L2o-/e<S`ç<한Cç2e日اI0يe국L9́<*K한\tBm] d0 >e*ãa/語3국da",
+    "counts": {
+      "o200k_base": 141,
+      "cl100k_base": 154
+    }
+  },
+  {
+    "text": "`2本1ا([한B日\t3ãdب ́S9K)لLLرe2>B語\t",
+    "counts": {
+      "o200k_base": 28,
+      "cl100k_base": 29
+    }
+  },
+  {
+    "text": "ا_한1يع*20어-_B/本_çلL국a本`aaا <eلع\nي) K국국S ç어*اL[(本[( ةلaL/]A*aCبçي2اع[AK語한9عCC\n]ã2\nعع本BaA한)L2́\t\ndeA어ب́اا本́ S日LبSL1́C😀ر2Aاçلا 語1اe/a>국ا국o-><2Lا😀/\n]😀يãرCo2< *-a)A_Ḱçب",
+    "counts": {
+      "o200k_base": 135,
+      "cl100k_base": 148
+    }
+  },
+  {
+    "text": "ل>S0Ad_9S한한Iç`>ç日한_10I`0_o_😀0Sة本語*يI한*日LKoã(-لSLo*o9語한>SIاoeo3()I語ي<C本어語a/(/>語語I_국اç/😀_日AIIa本عS日ÁL한\t1[<`ر語* 0LãoL9日",
+    "counts": {
+      "o200k_base": 102,
+      "cl100k_base": 111
+    }
+  },
+  {
+    "text": "\t국ي[9日 ةmm`9本_3]a😀日어اmo0\teo>[AA한AS_A어`لل/本ل_日́_語9<_dI/ã\nCa한CلC/語B0`بة_ب(B) a]aS[çeLm3*A한日ي]ãçAA3 C1ر _e0 Aç 1IçاL(국L_B9/0]]어d😀語>عSLmLAA (ل]-本>한0ãي語日A 3m-0o한2L\t日\nBرK`어語Sd\t(ي국ي\t]\n😀/ -ع]😀ل`ع\n`2日)한日국ãBCA*0)B9>(́d]1eKLيK3*😀[C日ã/\t",
+    "counts": {
+      "o200k_base": 191,
+      "cl100k_base": 211
+    }
+  },
+  {
+    "text": ">*/><]\n-2(ç *C1국S[K3\t\t 국K2CILS]ã A_Aا_19بةا2Aع本Lيعب 1aة93[))日ي국a`국\tيm)CCربB`C😀日eي/ر/_K-A>ةل<B**eç]ĹL9بa\n어[_C<>اي)يةل 9-日ḉãLm_́한本本́)(B)S (A`I_́*한9KdIاe ãل本\nç AS(3BC3어😀S/o]😀",
+    "counts": {
+      "o200k_base": 139,
+      "cl100k_base": 154
+    }
+  },
+  {
+    "text": "d-<)dL",
+    "counts": {
+      "o200k_base": 6,
+      "cl100k_base": 6
+    }
+  },
+  {
+    "text": " <`بS(BLB9>ع어`d本́9日A\tعا/2Aam*S)本0😀_́\n//́ãبK3국/[لع9)語 <0 語ر>/(어 ل́I)",
+    "counts": {
+      "o200k_base": 54,
+      "cl100k_base": 61
+    }
+  },
+  {
+    "text": "0d2한 3어SلررB\n<يeL]SيI\tة",
+    "counts": {
+      "o200k_base": 23,
+      "cl100k_base": 23
+    }
+  },
+  {
+    "text": "<*d1B\tã/çS한لاب/(_ب)A)ãa1LعL-어ب/\n/SKe어0ع*L`2ddç本I 3L ب)dS어يaا2m*[ Bعãا B*لo한😀국어ع어I(ل9*o本aoة(ةA0]0AKç<ça_Aا어SCI어dرdã<\tI--e한A語B )>LCBI[- a)국-a(B/CS어2국語]ãSB<9ة本\nIع ́d1I本-한",
+    "counts": {
+      "o200k_base": 138,
+      "cl100k_base": 143
+    }
+  },
+  {
+    "text": "اةلL_ 한يل-어`S_ç本日*(\t한بC\t日عaCç語يL90ب>ي0語KoL]\n3Am(B국ã0ر本*ب_L2-국يã😀<국3يçCر__0B o어0الرC本(😀- *한aS\nSAo한mBLK 日eB0\tK>ر/9dرA0> 本093́*한A2`K])(d`*>\t語ب>يm`çي(>Kي9本 meر 1(/9/3(e本`S_Lع`AmAaa\tرر]\n)<)ب](\n9국日S<ãL(́dA",
+    "counts": {
+      "o200k_base": 164,
+      "cl100k_base": 176
+    }
+  },
+  {
+    "text": "1ةير[\tع\n한ل]لo국(>ب00`ã]한عاçل어국m1本/اm10本日어daLةK국ع()ع日K😀A>d>1ل9\t 어(日9ر<يرKI한́ة[m2بBب)ل9ad\naISةل<😀<국3ر>d ] عLA\n \tL*́B Aoب يA1<*한語I한dK3K(L2S_ç日0`\nايIao2يa어日ãIB😀a(本😀ي2\n`ي_本>_]ا_-0]어)(語o[_Ia/ل)رLç本L😀2لي0]*語ا어`\t<어Aa한-ç한]ãب-ا*C本\n)ب語K",
+    "counts": {
+      "o200k_base": 188,
+      "cl100k_base": 207
+    }
+  },
+  {
+    "text": ">`어لIر(3本Aعm😀́ع\tãL\nK9اe/d*L`어 00Bdي어لKI>عçd-(ة2Cر1어`어L어L 한ر\nKل_Ćة本S국_(عببر(국국e>CC1L3KLK_ب日AبĹ]L-(́بa9o日 A(>-ة]اL😀어本日CI)a /-m3C\nا/m本3mب어لã本-9\tلL2ع́`한B\n3ع(o_mعBرCلبoة \nر)9어dçe)_>ا",
+    "counts": {
+      "o200k_base": 153,
+      "cl100k_base": 161
+    }
+  },
+  {
+    "text": "[ي))S😀ر33لAلe)IL-ي日oع9/국d́L*ل`3mBBبAب국a]ر́Iاm(>اdoI[` oL\t국_日>m한ر)0ãL0)\n9ل本 국ب(ةل어어Kة/국(2한국*]aLLKL\n국어\tCç日́́`2لبI日 (`국ل>9́LI-Sع  )لç)e 😀\nS😀日 ع국LييB어L 本ل ae*-LãĹB국dKe1يãKL\t9] d>어a09ã😀3어 *Ĺ\nل-😀[本 \tBلI어ã0ãAm9BL本eB日[2Lر語>Se11(국d)/K1ا>لm BS한ر2한ل국Aع",
+    "counts": {
+      "o200k_base": 203,
+      "cl100k_base": 224
+    }
+  },
+  {
+    "text": "́어국\t本d<m->(ç本0S2L Lاe<S_한K]_ة2mC2aI(C(IL 😀ر9日\nI😀[ل́3e2本Iod-ي( [با e本)`日L1aا\tعm어Lm(́ب2oر한]عة0ا本<ع/ *[/\t32>😀عC9한K9<ة-K한KSر0Kd́oKب3e\na>ا\tرL`\n\tاا لL)a語Aبaع>ل ب[0ب어😀ا本ã本*dاي😀C S]L\t[o>\n(d]L_ا0 ةL39",
+    "counts": {
+      "o200k_base": 159,
+      "cl100k_base": 170
+    }
+  },
+  {
+    "text": "31Baب한́)B9국\tã/語\no[a語/_9[Ia[ر )[aI>\nAK😀\tm<L\namة어1C`)]9]>  2I*어*dL[ب>a[عALA3ãL)<ب_ãd어A`어2L<\ne\nاعL-يية)\tرب(LLIçLm[\taةا0oا_>本بa>`33\nKي>0語mر\t 02ةL1ل0어>A`عIلر\t語 A日한한mCLL)ã2Am>ç語AKo(<😀9ل한CC_>`o\t>국o9L2]2[ع<0-o ãao어ب-B3`2本I> 1\n]_9LI어aاeةL_]ب]بة日😀本]0국2B日(KIL",
+    "counts": {
+      "o200k_base": 202,
+      "cl100k_base": 216
+    }
+  },
+  {
+    "text": "ã日국AAع*IS 語_9ر`يA رmãLA<eع1يe[]*한عL>S`<😀\tçd本2لL3ã́oلAب)\nا \tSd*",
+    "counts": {
+      "o200k_base": 54,
+      "cl100k_base": 57
+    }
+  },
+  {
+    "text": "(eة()本2B ad́B日لa\t/\tعر😀19C3ع2eLdCã 03ã한m2L2o국0B La국[한本]-Kعe1رL<語3-o한a[Cر2 1ç 어ةة日Iربل(국1한한本eB*C-2B日한ي)m*Cرر>]m`K\n /  Á\nر 국3ç9d )ا本ASmS>0/국)Iر😀Lريa本I((çLaي국ãL0ةK2m한本aaI ب_عKAL`ي́*d9_`m0o ل2한 LçãI 3I\t<maCçC>(m[국3Cا(اعL\ndLCI3[S語_L]Kã本m >😀_本 ا>m어ا9語3[I2\n어]1عSamة국m-",
+    "counts": {
+      "o200k_base": 217,
+      "cl100k_base": 238
+    }
+  },
+  {
+    "text": "(*ر`SĹ>ر2mK-L ة([-\n>`ل<本한_L국0(<e\n  \n  C(K日ع<😀́ةلبCلK0]aBç]e`LLo[]ةL3/me<0BC",
+    "counts": {
+      "o200k_base": 57,
+      "cl100k_base": 60
+    }
+  },
+  {
+    "text": "بLLلعm(رçل>]oلI어日S`本dçm]mK0Sa",
+    "counts": {
+      "o200k_base": 25,
+      "cl100k_base": 26
+    }
+  },
+  {
+    "text": "<mي `بLب😀ل9`<ر_*국لa3Lmo국ã本ي \tda)>ا/eع1́\t9عC>d2K😀(LبB)語oC) بe本Sل/`-국국)(do]국>A2IIS]本ة_ç03d ISB本aي9AeA한ã02Ḱ́ã́`ão-K9a[ي3)\tA-ي)ر[LلاI_<ب\tI\tةmç日(`日ã3dmا/K한KعCBا국mةعd\t😀ر本국😀ة_*L_3]語>ãعةا(0B語本Sḿ한\nIamة9eK\nI/-d3dS2́][KS عة/1`1ي*국LĹ\nã]3)<語اL*]\t語-]Kا<\t*1اã語국oب0لeamI3(d́)SC(/어K[//국 /IK رI)ة>A)_S-_本\nBل",
+    "counts": {
+      "o200k_base": 240,
+      "cl100k_base": 263
+    }
+  },
+  {
+    "text": "L2/ã m`m한B-́ã本ة(o]>`BoBçيا>21한 KmS2)K9ع*<😀B어1 oK>_ي9dA[<`` لdل>[ل́(ae本ASر어日語m-어رببر-am/m\n-Lا<1😀رa*L한*한日IãBبA<ل ةd本(B[BAا́a]]ç99\tLل\n국/<<[[ >😀ي_L />] e本d >(3어لا>한3ل語IKIK국ç語<I\nبي語 I한*\t日ã어3<BCة/e(LA`L[/<국عب)a]C\t32어19<ا0a<ãaçm]😀ب本-_d́>0e)A語국)ó>L한(ر",
+    "counts": {
+      "o200k_base": 193,
+      "cl100k_base": 209
+    }
+  },
+  {
+    "text": ")-😀d>CIعL\tL한́)ي한1ed-BKKç>a한ة日mç語ع Ḱ(çبرL/한한ة[ 0국C9A 0رة(ة1어o2Km한ç한日IL/本LIm31 KS\n]B)I\nç<S",
+    "counts": {
+      "o200k_base": 72,
+      "cl100k_base": 77
+    }
+  },
+  {
+    "text": "한SBا<(-한*d 9a 어́한本ãL_[`語本 ad😀ب1LA本ç ç😀\tيmB]LBç-LCKرلL22`AK[عe국3/ب\n>\t)A1 Aاع2)I日ة日9dBر\n>*>本ب2-語I本(>Á[]한S*dã\t1日<3本국😀[)çL -> [0SB어]]mة-La-لaع_B/́-CeS(3本B😀BIe2ع本어Ś국<اي>--AAo\n\nã2<LL*d本-日(0́ç3ç국́a/3L)ã 😀ã_국çS`I<ر92-ي[)Keة-\n語o)9ل/\n국L]語IçCoaLI-لر>CdKAر] aل",
+    "counts": {
+      "o200k_base": 204,
+      "cl100k_base": 220
+    }
+  },
+  {
+    "text": "1ãLo9S1_ل語(2لdL日/LL-mي日<한*어",
+    "counts": {
+      "o200k_base": 24,
+      "cl100k_base": 25
+    }
+  },
+  {
+    "text": "😀😀0́`어\n2-ةر`CK1ة3عK[e0어국بBلSS\noBa어B/(A\nI_B日ي😀\t-ي9ع/국m\tILC](*語\tA",
+    "counts": {
+      "o200k_base": 53,
+      "cl100k_base": 59
+    }
+  },
+  {
+    "text": "AS2>dا9́국Im/IبL0ç/ 2ç`어😀*[1LeK[>Bm)\t>\t_o*2]Io국(ر>A3A) 本2😀本\n😀>Iاo국0LCLoã́20S I2C語لع)))ICرل2\nBdB[한3ع本3رaI \tل語`ب9ل0d-اSd _/ma어`>_ç 1Sdايa本[`日a\n0`Lãḉا3C😀\tdيmةII9ب_*\nب[ 1어\n1]/a[9ع_😀ة어本`L2ا😀ر한çm<C어m[\nç0́بل>]BبK",
+    "counts": {
+      "o200k_base": 171,
+      "cl100k_base": 189
+    }
+  },
+  {
+    "text": "(한I2한ا *😀 1ا[_)日<29Aã日😀ل_語L>/́[3La\nاm/اm😀3語e어d9\n3S3a/ãB3日Lo\n9a>[어ao1L[3\t어ةemKع2mرA>日K3Cã`[0ا한(>)I19本",
+    "counts": {
+      "o200k_base": 89,
+      "cl100k_base": 94
+    }
+  },
+  {
+    "text": " ́>ا-日LاةA1L<eA99K9́한/  (>IL😀*ل-\tاع[/[>/<</çeçة<KيL語90日\t]L語 ́3oي)L)어a/ي😀/oKo2국I_本I3́`ل_oLب日ا\tبعoلB😀meب\nLCا한m9한9رa\n語لALSam本L😀I0BI`ç\t*)oL9)` 0 1語ا*어語L>m한ç mب어0d\tب",
+    "counts": {
+      "o200k_base": 134,
+      "cl100k_base": 148
+    }
+  },
+  {
+    "text": "A``33어I日\n]어2)(لI/<>mç3/Ĺ(a日9ã국국어語*ã[L/ر/2ad[\t\tB[ع😀(\tS 국m[국ر́_/عL2ي어9)S국`(`本어 ́ع\tة어😀1Lل-日日[日語)SãçرdCI어I\nا`-يCةر0I ر(ي<So語1LãبS*ي]本한ç -Iل*(L한́eAA1\n*ا3CAبd>😀AK日ç한어IBãLa]ة<́ S_ ارر국😀\nAB́`\t[[語eLS*>한(ŚKL😀9IL\nCo本 _çC31(ع[Sd3S ́0😀語\t9)語o لL日`1국çã_<1A_يoLBeر_ي어o0\nŚ語ليã[S<本ب語Ke`L2رãIã\n\tC",
+    "counts": {
+      "o200k_base": 235,
+      "cl100k_base": 261
+    }
+  },
+  {
+    "text": ">`9CçoçةA 本(اابçe`o(ة(لL>ل>eLL*L語][A_>o0CK日aC<بي ́ãaر0oSoL* 3ã-[本국03L本)`어L어SS1 B\nعب[C*ع9]ةe3국0😀2-ل \tIo[<ع語\n2KBL😀C9بeBL]رmã0ل*국ي/Lç\nã22日(9Ko2語(\nç((*ãCB( 어> o어9ã ي[ç本ي_1ي日Bيç_ر語>>ربي",
+    "counts": {
+      "o200k_base": 147,
+      "cl100k_base": 161
+    }
+  },
+  {
+    "text": "Ie(را3 />́ر́ة😀1d(/ب0La2ا2K0ة 3",
+    "counts": {
+      "o200k_base": 24,
+      "cl100k_base": 27
+    }
+  },
+  {
+    "text": "́)ã語2]2어1국ة本aL9́어-1 */ç*a/ã[`한eB<o日K2語e-S* 1ة21\nLC한 m語국oCL국ã ا\t*日-ãeعCoع11çا[ عã本0[IS\t*L\tS0B-́]ا<S국>3mç-本]_<국]`3語çd]ã3m日çI本B-\tعةب\t日ع[B(日ã어رm(ي국KSĆ\t́한eر< رL😀o本`어😀😀*-2Á30_0ة",
+    "counts": {
+      "o200k_base": 148,
+      "cl100k_base": 163
+    }
+  },
+  {
+    "text": "C/-بLل0*ر<]K[e\tS]국`本C*<ĆL 0ة<ا日어L本13_-LK<<\tḿ\n한ةA /adL<1يeع`بILã>çلdSL\t😀(>[L)لe0ع3L__日本語IرãSب[*<한*ب>3ي`لLر رة日\tKma日日]ا국/(-* \tر日2ةIC9\n_ó😀😀日\t>3-(-ي mãبرB>😀2́語-I[3dL32\n*Cd31本يIC어2mIBe\tيdç",
+    "counts": {
+      "o200k_base": 153,
+      "cl100k_base": 163
+    }
+  },
+  {
+    "text": "  Aa\nç]B3́>ر*😀L/3LععL",
+    "counts": {
+      "o200k_base": 19,
+      "cl100k_base": 21
+    }
+  },
+  {
+    "text": ">\n1KL2ر어L[KبCرS-d\t_2/한ب\tاةSعل-ã>Iع😀-Ae어한ã한한a0L日(CاA1`m\n ر\n3LA한K😀ربBa>S\ne語Bع ã<ل1語(한日0한[`😀어 9C3어\n\n한)本[ `3ICLيي3<*-0어>L /-어L[ل)عLة`\n本<ا0ç32\tB<oeة-1ا-<)*>)1o2\nرC_한ã9*<Ćd Bة한L語語_L本 çرç(Kةع_[ةةeS국o😀B] Ad )عC3d]_<Beر0aãçي😀I\t)\nãd39çC한",
+    "counts": {
+      "o200k_base": 188,
+      "cl100k_base": 203
+    }
+  },
+  {
+    "text": "ã2بL(국)Lب2KSS\tرعير<çaب 本mIب日)A本9->\tبç92/AI1국́`(3>KC<e2`3ل \t0(ç\nر)]ي عI*Ćç)ةC*]`́I국9_m한KIedB\n日0Km)語`😀ر́يCoة\n1<9ب_mã-ل́本<a2لBيe\n",
+    "counts": {
+      "o200k_base": 108,
+      "cl100k_base": 114
+    }
+  },
+  {
+    "text": "\n-국0-/ع`\teبرKI>لS(Lيad😀بLdA*Lã>\nd한😀\nLبe<)a3L>3را2😀-語]́국dm3😀اB語ع]😀本1`/B_برLd😀ع`a-< m`Sa9لAAلI /_Io語/本dS[한eC[한aA23>日ر9]語ة)1e 국어AS日mIرB2 1́IL😀日국ة(_́ة日本2ب語어`BdaCBK語mmd`a-SoL\t*>어`-9\tيL0e)(ة(ع`[9😀-😀K本Bd한2عm>e*\nل1اLe>국[ ç]/ة어[ر>B語eA(] بaA*]😀Aa日9_I]1\ta本2ã국2국`)ãلع12한óçع`本한/\n `ب국ي Iã]ç語عm",
+    "counts": {
+      "o200k_base": 235,
+      "cl100k_base": 267
+    }
+  },
+  {
+    "text": "LK<Lo*한عo-I 2A국語بç_ا-عd日ر]😀a어)<어어oSAي\tmر2K *ã2本Aل\t< 한بa92e[L_/́لḰ/KLK رK -日한çةdaB한]/Kر09ا국",
+    "counts": {
+      "o200k_base": 73,
+      "cl100k_base": 78
+    }
+  },
+  {
+    "text": "بيبL9o(ع3 2Ĺ-<CA2A 31ل*1K\n[日][ة국😀*한اdã日(m ́Bل>[국ا3B_ل\teب2K\tةB1B/1ãL😀어한 `L/日-]́(어日ã-لI한[ad<`__국I [",
+    "counts": {
+      "o200k_base": 86,
+      "cl100k_base": 93
+    }
+  },
+  {
+    "text": "d/  يç*語/日́ل>ر)`01ر]本_`ا)9ãCي\tI<>ة2́)日çd\td9本ل😀ÁيLL어_oK9ةm[/)d/a어mA 99K 0B>Kر0mاeة]a`d[I`eا)لB`어(/ع0يI(L-يL)ة-3ار>本) S[\n어ب日çC本 ة0]]_\ta語本ي)S국CL\nAãB9>K_(국 >m39",
+    "counts": {
+      "o200k_base": 132,
+      "cl100k_base": 136
+    }
+  },
+  {
+    "text": "ا`ã1< d)ا😀I/K[ارI국)ad-Ĺ\t(ا/a\n국어)>ةo9>1ب한L本*\t]ة`ع_ ]L > ي(اKma_ع日1A\t語ر/>o/3ãL\n/]o本ا]1>_ا3ةç 2 3[<ç*-9한ã本L[رã ب)0 K ILرm한\n>2[/ل語0ر😀́/ãS-]ãm本ر한I(\tرK_한ب9>)ç ب1ر국بK>LÁ19語\t 0لo]́`Bي>2بلة 2\t어ã本) ا32a<Bç<어",
+    "counts": {
+      "o200k_base": 172,
+      "cl100k_base": 180
+    }
+  },
+  {
+    "text": "22/本한-ICCçع-CS語3رع本/日<한本_ (`ea__-[*m/ب\nB لdا(1)ã어́K한\ne[KBب😀]93ي-*ا/",
+    "counts": {
+      "o200k_base": 53,
+      "cl100k_base": 55
+    }
+  },
+  {
+    "text": "m語日d語[́><يçي3eب\n",
+    "counts": {
+      "o200k_base": 15,
+      "cl100k_base": 17
+    }
+  },
+  {
+    "text": "( L(本LI)BBĹ3 dةةب)e<[يB<本2-ة]한I어ا한ي한-\t  )C)\nي/3*d )3a _ي/국 اI(日국<<<A한ç語CL語語\tK本́ر<ç-語0d́한`اK]çب本국(e\tAd/]ر0 `عA-L3SçB́//0ا",
+    "counts": {
+      "o200k_base": 97,
+      "cl100k_base": 105
+    }
+  },
+  {
+    "text": "0 /\t국L本_d0/رSaبãاا<😀`(S<1ع Lعة本국 عç*`رo3)رةã])ع\t한국*>LIm1ي日يLرd]<어_m0`B1I_국لS/ع\nي0ي1_3ل*_*ل1́2本ãيLm😀3çC]́]ع39عd́한9`ع*ا3mبلLm本3(1한CçB日9m日a1]ر\tب😀)`語d[국m日\t-😀](\n국d😀` `(a어S_C9BCm2本ةرL국A[\n/́한aب😀CبA]어ã)한I_\tS2e ب Ko*́😀001ب ل국0Cلع/ ã本2e2K",
+    "counts": {
+      "o200k_base": 195,
+      "cl100k_base": 216
+    }
+  },
+  {
+    "text": "رSL😀9oBC0日ي日`/I o-한SA`L*K`AI 日B本\n9́a日>Lر*ة국A日한語ي/a1ي<本2\n한 _\t`\t3국91 0_2اe\t9한*Lي \na-\t`\nd Sي>ا9I*_한ا ",
+    "counts": {
+      "o200k_base": 83,
+      "cl100k_base": 86
+    }
+  },
+  {
+    "text": "AةIيCB9\t9-ة😀`Iا9語B́اm-dAة)dd語어d-😀`국本<ةر2C1`9]m9_ر[ب-*9>́)ي<aي)o<[국L/ة2çعAB어ع13]ç->(-eeبAB語\t*2I",
+    "counts": {
+      "o200k_base": 81,
+      "cl100k_base": 88
+    }
+  },
+  {
+    "text": "0d-ر`ر日`ãة어(لع\n02本日(oIo한_2 ]*3L`LبS-ةر<",
+    "counts": {
+      "o200k_base": 34,
+      "cl100k_base": 35
+    }
+  },
+  {
+    "text": "# Skill\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\nUse ação e revisão: [texto](arquivo.md).\n",
+    "counts": {
+      "o200k_base": 3303,
+      "cl100k_base": 4203
+    }
+  }
+]
