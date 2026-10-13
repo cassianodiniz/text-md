@@ -149,3 +149,24 @@ struct TrashView: View {
         }.padding(30).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
+
+
+struct ClosedDraftsView: View {
+    let model: AppModel
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Documentos fechados").font(.system(size: 22, weight: .semibold))
+            Text("Eles ficam fora da lateral. Reabra somente o que quiser recuperar.").foregroundStyle(.secondary)
+            List(model.hiddenDrafts) { draft in
+                HStack {
+                    Text(draft.title).lineLimit(1)
+                    Spacer()
+                    Button("Reabrir") { model.select(draft.id); dismiss() }
+                    Button("Apagar", role: .destructive) { model.trashDraft(draft.id) }
+                }
+            }
+            HStack { Spacer(); Button("Fechar") { dismiss() } }
+        }.padding(24).frame(minWidth: 580, minHeight: 380)
+    }
+}

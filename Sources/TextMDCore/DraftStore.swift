@@ -117,6 +117,15 @@ public final class DraftStore {
         }
         return moved
     }
+    /// Older versions listed every stored note, even after its tab was closed.
+    /// Hide those entries without deleting their text, history or source files.
+    public func hideLegacyClosedDrafts(session: SessionState) throws {
+        let openIDs = Set(session.windows?.flatMap(\.tabs) ?? session.tabs)
+        for var draft in try allDrafts() where draft.deletedAt == nil && draft.hiddenFromSidebar == nil {
+            draft.hiddenFromSidebar = !openIDs.contains(draft.id) && !draft.pinned
+            try save(draft)
+        }
+    }
     public func saveSession(_ session: SessionState) throws {
         let stmt = try statement("INSERT INTO settings(id,json) VALUES ('session',?) ON CONFLICT(id) DO UPDATE SET json=excluded.json;")
         defer { sqlite3_finalize(stmt) }; try bind(session, to: stmt, index: 1); try step(stmt)

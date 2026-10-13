@@ -6,11 +6,11 @@ localmente, como nas notas, e o original só muda ao salvar.
 
 ## Baixar e instalar
 
-Baixe o **[text-md 0.3.0 para Mac Apple Silicon](https://github.com/cassianodiniz/text-md/releases/tag/v0.3.0)**.
+Baixe o **[text-md 0.3.1 para Mac Apple Silicon](https://github.com/cassianodiniz/text-md/releases/tag/v0.3.1)**.
 O pacote requer macOS 14 ou posterior e um Mac com chip Apple (M1 ou posterior);
 não contém uma versão para Macs Intel.
 
-1. Baixe `text-md-0.3.0-macos-arm64.dmg` e abra o arquivo.
+1. Baixe `text-md-0.3.1-macos-arm64.dmg` e abra o arquivo.
 2. Arraste **text-md.app** para **Applications / Aplicativos**.
 3. Ejete a imagem e abra o app na pasta Aplicativos.
 
@@ -51,12 +51,29 @@ Um rascunho novo vazio, ou contendo somente espaços e quebras de linha, é
 temporário. Ele começa a ser guardado quando você escreve conteúdo. Se apagar
 tudo depois de escrever, a nota e suas versões continuam preservadas.
 
-Fixe pastas pelo **pin** à direita da linha ou junto ao caminho atual. Ele aparece ao passar o mouse, selecionar ou navegar pelo teclado. Fixar/desafixar não abre a pasta. O menu de contexto de um arquivo permite
-abrir, renomear, mover, mostrar no Finder e enviar à Lixeira do Mac. O menu de
-contexto de uma nota permite fixar, acessar versões e enviar seu rascunho à
-lixeira interna. Desafixar uma pasta remove somente o atalho.
-**Fixados** aparece primeiro. Clique em qualquer ponto da linha para selecionar
-um arquivo ou entrar em uma pasta. Os cabeçalhos recolhem e expandem as seções, lembrando seu estado ao reabrir.
+Cada item da lateral tem um menu **⋯** com **Abrir em**, **Fixar/Desafixar**,
+**Mover para…** e **Apagar**. O pin também pode ser acionado diretamente na linha.
+**Mover para…** abre o seletor de pasta; um rascunho ainda sem arquivo passa a ser
+um documento Markdown naquela pasta.
+
+Dê **duplo clique no nome** para renomear na própria lateral. **Enter** confirma,
+**Esc** cancela. Em arquivos existentes, isso altera o nome real no disco e o nome
+da aba; a extensão é preservada quando você não digita outra. Rascunhos sem arquivo
+têm um nome próprio, que será usado ao salvá-los. O conteúdo não é reescrito pelo
+ato de renomear. Propriedades YAML não viram o título do rascunho.
+
+**Fechar uma aba retira o documento da lateral**, preservando seu texto para
+recuperação. Ele não volta automaticamente após reiniciar o app. Use
+**⋯ da seção → Recuperar fechados…** ou **⌘⇧T** para reabri-lo explicitamente.
+Encerrar o aplicativo com **⌘Q** continua preservando as abas que você deixou abertas.
+Rascunhos novos vazios não aparecem na lateral, e o editor começa em branco,
+sem sugestões de escrita.
+
+**Apagar** um arquivo ou pasta os envia à Lixeira do Mac, com confirmação; seus
+rascunhos saem da lateral e ficam recuperáveis na lixeira interna por 90 dias.
+Apagar uma nota sem arquivo afeta somente a biblioteca do app. Desafixar remove
+somente o atalho. **Fixados** aparece primeiro; os cabeçalhos recolhem e expandem
+as seções, lembrando seu estado ao reabrir.
 
 ## Pastas, abas e janelas
 
@@ -178,7 +195,7 @@ o projeto, inclusive comercialmente, preservando o aviso de copyright e a licen�
 Veja [LICENSE](LICENSE) e [os avisos de terceiros](THIRD_PARTY_NOTICES.md).
 
 
-Para empacotar uma compilação 0.3.0 existente, `scripts/package_release.py` gera
-DMG, ZIP e somas SHA-256 em `build/releases/0.3.0/`, sem iniciar o aplicativo.
+Para empacotar uma compilação existente, `scripts/package_release.py` gera
+DMG, ZIP e somas SHA-256 em `build/releases/<versão>/`, sem iniciar o aplicativo.
 Os scripts `ui_*` usam o primeiro plano do Mac: execute-os somente quando o
 usuário autorizar disponibilizar a tela. A criação da release não executa esses scripts.

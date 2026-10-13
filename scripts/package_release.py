@@ -3,6 +3,7 @@
 from pathlib import Path
 import hashlib
 import plistlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -11,7 +12,7 @@ root = Path(__file__).resolve().parents[1]
 source = root / 'build/text-md.app'
 info = plistlib.loads((source / 'Contents/Info.plist').read_bytes())
 version = info['CFBundleShortVersionString']
-assert version == '0.3.0', 'This release script packages text-md 0.3.0.'
+assert re.fullmatch(r'\d+\.\d+\.\d+', version), 'Expected a semantic release version.'
 architectures = subprocess.check_output(['lipo', '-archs', str(source / 'Contents/MacOS/text-md')], text=True).strip()
 assert architectures == 'arm64', 'Expected the Apple Silicon build.'
 subprocess.run(['codesign', '--verify', '--deep', '--strict', str(source)], check=True)

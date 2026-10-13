@@ -207,3 +207,31 @@ e integridade da imagem de disco. Não foi iniciado o app nem executado teste de
 interface na preparação desta release. Não se afirma teste em Intel ou em outros
 Macs. A distribuição não tem Developer ID/notarização; isso está documentado nas
 instruções de primeira abertura.
+
+
+## Revisão 0.3.1 — 13/10/2026, horário de Brasília
+
+Origem do problema: a lateral incluía todas as notas guardadas em memória,
+inclusive as fechadas e as temporárias vazias; as ações dependiam de botão direito.
+O editor desenhava explicitamente dois textos de sugestão quando vazio.
+
+Correção: menu visível por item; edição inline do nome com duplo clique; nome
+próprio para notas sem arquivo; renomeação real sem mudar o Markdown; fechamento
+com estado oculto persistente e recuperação separada; migração de fechados antigos
+sem apagar seu conteúdo. Recarregar uma alteração externa preserva esse estado.
+Os gestos distinguem clique simples de duplo antes de abrir o documento e capturam
+Command no próprio evento, inclusive para documentos de outras janelas.
+
+Compilação release e 35 testes de dados passaram. Os quatro novos casos usam
+somente diretórios temporários: fechar/reabrir biblioteca, migração, preservação
+após alteração externa, renomear mantendo BOM/CRLF, colisões de destino, alteração
+apenas de maiúsculas/minúsculas, títulos YAML e vazios fora da lateral.
+
+Não foi aberto o aplicativo para testes, nem executados scripts de interface ou
+capturas de tela. O comportamento visual do gesto e dos menus não foi conferido
+com cliques reais nesta revisão, conforme a preferência do usuário.
+
+A instalação 0.3.1 foi substituída após encerramento normal da versão anterior.
+Foi feito backup do aplicativo e da biblioteca; os hashes da biblioteca
+coincidiram antes e depois da troca. O app novo não foi iniciado para evitar
+tomar o foco da tela. DMG e ZIP preservam a MIT e os avisos de terceiros.

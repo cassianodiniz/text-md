@@ -297,17 +297,8 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         if showingDiff { (layoutManager as? MarkdownLayoutManager)?.drawDeletions(at: textContainerOrigin, dirtyRect: dirtyRect) }
-        if showingDiff, (layoutManager as? MarkdownLayoutManager)?.deletedBlocks.isEmpty == false { return }
-        guard string.isEmpty else { return }
-        let origin = textContainerOrigin
-        ("Comece a escrever…" as NSString).draw(at: origin, withAttributes: [
-            .font: sourceMode ? NSFont.monospacedSystemFont(ofSize: 14, weight: .regular) : MarkdownStyler.serif(22),
-            .foregroundColor: NSColor.tertiaryLabelColor
-        ])
-        ("Seu rascunho fica guardado neste Mac." as NSString).draw(
-            at: NSPoint(x: origin.x, y: origin.y + 38),
-            withAttributes: [.font: NSFont.systemFont(ofSize: 12), .foregroundColor: NSColor.tertiaryLabelColor])
     }
+
     override func copy(_ sender: Any?) {
         let text = (string as NSString).substring(with: selectedRange())
         NSPasteboard.general.clearContents(); NSPasteboard.general.setString(text, forType: .string)

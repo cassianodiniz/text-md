@@ -49,7 +49,7 @@ info = {
     "CFBundleName": "text-md", "CFBundleDisplayName": "text-md", "CFBundleExecutable": "text-md",
     "CFBundleIdentifier": "com.cassiano.text-md", "CFBundlePackageType": "APPL",
     "CFBundleIconFile": "AppIcon",
-    "CFBundleShortVersionString": "0.3.0", "CFBundleVersion": "4", "LSMinimumSystemVersion": "14.0",
+    "CFBundleShortVersionString": "0.3.1", "CFBundleVersion": "5", "LSMinimumSystemVersion": "14.0",
     "NSHighResolutionCapable": True, "NSPrincipalClass": "NSApplication", "CFBundleDevelopmentRegion": "pt_BR",
     "CFBundleLocalizations": ["pt_BR"],
     "CFBundleDocumentTypes": [{"CFBundleTypeName": "Markdown", "CFBundleTypeRole": "Editor",

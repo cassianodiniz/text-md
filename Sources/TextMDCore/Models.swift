@@ -16,6 +16,8 @@ public struct Draft: Codable, Identifiable, Equatable {
     public var lastSnapshotAt: Date?
     /// Optional for compatibility with the first version's library.
     public var hasWrittenContent: Bool?
+    public var displayName: String?
+    public var hiddenFromSidebar: Bool?
 
     public init(id: UUID = UUID(), content: String = "", sourcePath: String? = nil,
                 baselineHash: String? = nil, now: Date = Date()) {
@@ -27,12 +29,23 @@ public struct Draft: Codable, Identifiable, Equatable {
 
     public var title: String {
         if let sourcePath { return URL(fileURLWithPath: sourcePath).lastPathComponent }
-        for line in content.components(separatedBy: .newlines) {
-            let text = line.trimmingCharacters(in: .whitespaces)
-                .replacingOccurrences(of: "^#{1,6}\\s+", with: "", options: .regularExpression)
-            if !text.isEmpty { return String(text.prefix(64)) }
+        if let displayName, !displayName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { return displayName }
+        let lines = content.components(separatedBy: .newlines)
+        var frontMatter = lines.first?.trimmingCharacters(in: .whitespaces) == "---"
+        for (index, line) in lines.enumerated() {
+            let raw = line.trimmingCharacters(in: .whitespaces)
+            if frontMatter {
+                if index > 0 && (raw == "---" || raw == "...") { frontMatter = false }
+                continue
+            }
+            let text = raw.replacingOccurrences(of: "^#{1,6}\\s+", with: "", options: .regularExpression)
+            if !text.isEmpty && !["---", "***", "___"].contains(text) { return String(text.prefix(64)) }
         }
-        return "Novo rascunho"
+        return "Sem título"
+    }
+    public func visibleInSidebar(openIDs: Set<UUID>) -> Bool {
+        guard deletedAt == nil, shouldPersist, hiddenFromSidebar != true else { return false }
+        return hiddenFromSidebar == false || pinned || openIDs.contains(id)
     }
     public var isModified: Bool {
         guard let baselineHash else { return true }

@@ -32,15 +32,7 @@ struct WorkspaceView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .id("editor-host")
                     } else {
-                        ContentUnavailableView {
-                            Label("Sua próxima ideia começa aqui", systemImage: "square.and.pencil")
-                        } description: {
-                            Text("Crie um rascunho ou abra um arquivo. Você pode fechar sem salvar no original.")
-                        } actions: {
-                            Button("Novo rascunho") { model.newDraft() }.buttonStyle(.borderedProminent)
-                            Button("Abrir arquivo…") { model.openPanel() }
-            Button("Abrir pasta…") { model.openFolderPanel() }
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                        Color(nsColor: MarkdownStyler.paperColor).frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                     Divider()
                     statusBar
@@ -81,6 +73,7 @@ struct WorkspaceView: View {
         } message: { Text(model.errorMessage ?? "") }
         .sheet(item: $model.conflict) { presentation in ConflictView(model: model, presentation: presentation) }
         .sheet(item: $model.history) { presentation in HistoryView(model: model, draftID: presentation.id) }
+        .sheet(isPresented: $model.showClosedDrafts) { ClosedDraftsView(model: model) }
         .onChange(of: model.search) { _, _ in model.searchFiles() }
         .onChange(of: model.active?.sourcePath) { _, path in
             if let path, model.currentFolder != URL(fileURLWithPath: path).deletingLastPathComponent().path {

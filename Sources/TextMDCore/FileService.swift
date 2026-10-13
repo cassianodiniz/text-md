@@ -2,6 +2,25 @@ import Foundation
 import CryptoKit
 
 public enum FileService {
+    public static func validName(_ value: String) throws -> String {
+        let name = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !name.contains("/"), !name.contains(":"), name != ".", name != "..",
+              name.rangeOfCharacter(from: .controlCharacters) == nil else {
+            throw TextMDError.invalidDestination("Escolha um nome válido.")
+        }
+        return name
+    }
+    public static func renamedDestination(for source: URL, name: String) throws -> URL {
+        var name = try validName(name)
+        if (name as NSString).pathExtension.isEmpty && !source.pathExtension.isEmpty { name += "." + source.pathExtension }
+        return source.deletingLastPathComponent().appendingPathComponent(name)
+    }
+    public static func suggestedFilename(for draft: Draft) throws -> String {
+        let cleaned = draft.title.components(separatedBy: CharacterSet(charactersIn: "/:").union(.controlCharacters)).joined(separator: "-")
+        let name = try validName(cleaned)
+        return (name as NSString).pathExtension.isEmpty ? name + ".md" : name
+    }
+
     public static func isEditable(_ url: URL) -> Bool {
         ["md", "markdown", "txt"].contains(url.pathExtension.lowercased()) ||
         ["LICENSE", "README", "NOTICE", "CHANGELOG", ".GITIGNORE"].contains(url.lastPathComponent.uppercased())
@@ -49,6 +68,17 @@ public enum FileService {
             return .inaccessible(error.localizedDescription)
         }
     }
+    /// Reload file content while preserving the draft identity and sidebar state.
+    public static func reload(_ draft: Draft) throws -> Draft {
+        guard let path = draft.sourcePath else { throw TextMDError.missing }
+        var current = try open(URL(fileURLWithPath: path))
+        current.id = draft.id; current.createdAt = draft.createdAt; current.pinned = draft.pinned
+        current.displayName = draft.displayName; current.hiddenFromSidebar = draft.hiddenFromSidebar
+        current.hasWrittenContent = draft.hasWrittenContent; current.lastSnapshotAt = draft.lastSnapshotAt
+        current.selection = min(draft.selection, (current.content as NSString).length)
+        current.scrollPosition = draft.scrollPosition
+        return current
+    }
     /// Content is checked again inside the coordinated write, including when the
     /// original changed after the UI's last check. Symlinks resolve to the real file.
     public static func save(_ draft: Draft, to destination: URL? = nil,
@@ -93,7 +123,16 @@ public enum FileService {
     /// local relative image dependencies to the same relative locations first.
     public static func moveDocument(from source: URL, to target: URL, draftContents: [String] = []) throws {
         let fm = FileManager.default
-        guard !fm.fileExists(atPath: target.path) else {
+        if fm.fileExists(atPath: target.path) {
+            let sourceInfo = try fm.attributesOfItem(atPath: source.path)
+            let targetInfo = try fm.attributesOfItem(atPath: target.path)
+            let onlyCaseChanged = source.deletingLastPathComponent() == target.deletingLastPathComponent() &&
+                source.lastPathComponent != target.lastPathComponent &&
+                source.lastPathComponent.caseInsensitiveCompare(target.lastPathComponent) == .orderedSame
+            if onlyCaseChanged, sourceInfo[.systemFileNumber] as? NSNumber == targetInfo[.systemFileNumber] as? NSNumber,
+               sourceInfo[.systemNumber] as? NSNumber == targetInfo[.systemNumber] as? NSNumber {
+                try fm.moveItem(at: source, to: target); return
+            }
             throw TextMDError.invalidDestination("Já existe um arquivo com esse nome. Nenhum arquivo foi substituído.")
         }
         let original = try open(source)

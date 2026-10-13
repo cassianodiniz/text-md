@@ -20,7 +20,9 @@ final class AppLibrary {
         do {
             let store = try DraftStore(root: Self.rootURL()); self.store = store
             try store.cleanup(); try store.recoverLegacyEmptyDrafts()
-            drafts = try store.allDrafts(); preferences = try store.session()
+            preferences = try store.session()
+            try store.hideLegacyClosedDrafts(session: preferences)
+            drafts = try store.allDrafts()
         } catch { self.store = nil; errorMessage = error.localizedDescription }
     }
 }
@@ -97,6 +99,10 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     }
     func owner(of id: UUID) -> AppModel? { placement(of: id)?.0 }
     func createWindow() { pending.append(WindowState()); openWindowAction?() }
+    func createWindow(in folder: URL) {
+        var state = WindowState(); state.currentFolder = folder.path; state.sidebarMode = .folders
+        pending.append(state); openWindowAction?()
+    }
     func reopenApplication() {
         if let model = active, let window = model.nativeWindow {
             window.deminiaturize(nil); window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true)
@@ -175,6 +181,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
     }
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         let model = models.first { $0.nativeWindow === sender }; model?.flushEditor()
+        if !terminating, let model { for id in model.session.tabs { model.hideFromSidebar(id) } }
         if library.uncommitted.isEmpty && !library.sessionWriteFailed {
             var snapshot = library.preferences
             let valid = Set(library.drafts.filter { $0.shouldPersist && $0.deletedAt == nil }.map(\.id))
@@ -190,7 +197,7 @@ final class WindowCoordinator: NSObject, NSWindowDelegate {
         guard !terminating, let window = notification.object as? NSWindow,
               let model = models.first(where: { $0.nativeWindow === window }) else { return }
         model.flushEditor()
-        for id in model.session.tabs { rememberClosed(id, in: model) }
+        for id in model.session.tabs { rememberClosed(id, in: model); model.hideFromSidebar(id) }
         model.stopObserving(); models.removeAll { $0 === model }
         if activeWindowID == model.windowID { activeWindowID = models.last?.windowID }
         if let remaining = active { persist(from: remaining) }

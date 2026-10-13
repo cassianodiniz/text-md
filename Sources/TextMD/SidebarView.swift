@@ -41,6 +41,7 @@ struct SidebarView: View {
                             Button("Documentos / rascunhos") { model.setSidebarMode(.documents) }
                             Divider()
                             Button("Abrir pasta…") { model.openFolderPanel() }
+                            Button("Recuperar fechados…") { model.showClosedDrafts = true }
                         } label: { Image(systemName: "ellipsis").frame(width: 24, height: 24) }
                             .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                             .accessibilityLabel("Navegação lateral").accessibilityIdentifier("sidebar-options")
@@ -49,9 +50,6 @@ struct SidebarView: View {
                         if model.sidebarMode == .folders { folderContents }
                         else {
                             ForEach(model.visibleDrafts.filter { !$0.pinned }) { draft in draftRow(draft) }
-                            if model.visibleDrafts.filter({ !$0.pinned }).isEmpty {
-                                Text("Seus rascunhos ficam guardados aqui.").font(.system(size: 12)).foregroundStyle(.secondary).padding(14)
-                            }
                         }
                     }
                     if !model.search.isEmpty {
@@ -115,46 +113,45 @@ struct SidebarView: View {
             selected: model.sidebarMode == .folders && model.currentFolder.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(url) } == true)
     }
     private func draftRow(_ draft: Draft) -> some View {
-        Button { model.select(draft.id, newTab: (NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags).contains(.command)) } label: {
-            HStack(spacing: 7) {
-                Image(systemName: draft.pinned ? "pin.fill" : draft.sourcePath == nil ? "note.text" : "doc.text").font(.system(size: 12)).foregroundStyle(.secondary)
-                Text(draft.title).lineLimit(1)
-                Spacer(minLength: 0)
-                if model.uncommitted.contains(draft.id) { Image(systemName: "exclamationmark.circle").foregroundStyle(.red) }
-                else if draft.isModified && draft.sourcePath != nil { Circle().fill(.secondary).frame(width: 4, height: 4) }
-            }.font(sidebarFont).padding(.horizontal, 14).frame(height: 32)
-                .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                .background(model.session.selectedID == draft.id && !model.showingTrash ? Color.primary.opacity(0.07) : .clear)
-        }.buttonStyle(.plain).accessibilityLabel(draft.title).accessibilityIdentifier("draft:" + draft.id.uuidString)
-            .contextMenu {
-                Button(draft.pinned ? "Desafixar nota" : "Fixar nota") { model.pin(draft.id) }
-                Button("Versões anteriores") { model.history = HistoryPresentation(id: draft.id) }
-                Button("Enviar rascunho à lixeira interna", role: .destructive) { model.trashDraft(draft.id) }
-                if let path = draft.sourcePath { Button("Mostrar no Finder") { NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: path)]) } }
+        SidebarDocumentRow(title: draft.title, icon: draft.sourcePath == nil ? "note.text" : "doc.text",
+            identifier: "draft:" + draft.id.uuidString, selected: model.session.selectedID == draft.id && !model.showingTrash,
+            pinned: draft.pinned, muted: false,
+            open: { model.select(draft.id, newTab: $0) },
+            rename: { model.renameDraft(draft.id, to: $0) }, pin: { model.pin(draft.id) }) {
+            Menu("Abrir em") {
+                Button("Esta aba") { model.select(draft.id, newTab: false) }
+                Button("Nova aba") { model.select(draft.id) }
+                Button("Nova janela") { model.openDraftInNewWindow(draft.id) }
             }
+            LabelledPin(pinned: draft.pinned) { model.pin(draft.id) }
+            Button { model.moveDraftPanel(draft.id) } label: { Label("Mover para…", systemImage: "folder") }
+            Divider()
+            Button(role: .destructive) { model.deleteDraft(draft.id) } label: { Label("Apagar", systemImage: "trash") }
+        }
     }
     private func fileRow(_ node: FileNode) -> some View {
         let selected = model.active?.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(node.url) } == true
-        return Button { model.open(node.url, newTab: (NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags).contains(.command)) } label: {
-            HStack(spacing: 7) {
-                Image(systemName: node.isEditable ? "doc.text" : "doc").font(.system(size: 12))
-                Text(node.name).lineLimit(1).truncationMode(.middle)
-                Spacer(minLength: 0)
-            }.font(sidebarFont).foregroundStyle(node.isEditable ? Color.primary : Color.secondary)
-                .padding(.horizontal, 14).frame(height: 32).frame(maxWidth: .infinity, alignment: .leading)
-                .background(selected ? Color.primary.opacity(0.07) : .clear).contentShape(Rectangle())
-        }.buttonStyle(.plain).accessibilityLabel("Arquivo " + node.name + (node.isEditable ? "" : " · abre em outro aplicativo"))
-            .accessibilityIdentifier("file:" + node.url.path)
-            .contextMenu {
-                Button("Abrir") { model.open(node.url, newTab: false) }
-                if node.isEditable { Button("Abrir em nova aba") { model.open(node.url) } }
-                Button("Renomear…") { model.rename(node.url) }
-                Button("Mover…") { model.movePanel(node.url) }
-                Button("Mostrar no Finder") { NSWorkspace.shared.activateFileViewerSelecting([node.url]) }
-                Divider()
-                Button("Enviar arquivo à Lixeira do Mac…", role: .destructive) { model.trashFile(node.url) }
+        let pinned = model.draftForFile(node.url)?.pinned == true
+        return SidebarDocumentRow(title: node.name, icon: node.isEditable ? "doc.text" : "doc",
+            identifier: "file:" + node.url.path, selected: selected, pinned: pinned, muted: !node.isEditable,
+            open: { model.open(node.url, newTab: $0) },
+            rename: { model.renameFile(node.url, to: $0) }, pin: node.isEditable ? { model.toggleFilePin(node.url) } : nil) {
+            Menu("Abrir em") {
+                if node.isEditable {
+                    Button("Esta aba") { model.open(node.url, newTab: false) }
+                    Button("Nova aba") { model.open(node.url) }
+                    Button("Nova janela") { model.openFileInNewWindow(node.url) }
+                } else {
+                    Button("Aplicativo padrão") { model.open(node.url) }
+                }
             }
+            if node.isEditable { LabelledPin(pinned: pinned) { model.toggleFilePin(node.url) } }
+            Button { model.movePanel(node.url) } label: { Label("Mover para…", systemImage: "folder") }
+            Divider()
+            Button(role: .destructive) { model.trashFile(node.url) } label: { Label("Apagar", systemImage: "trash") }
+        }
     }
+
 }
 
 private struct FolderSidebarRow: View {
@@ -173,25 +170,117 @@ private struct FolderSidebarRow: View {
                     if showsIcon { Image(systemName: "folder.fill").font(.system(size: 12)).foregroundStyle(.secondary) }
                     Text(title).font(Font(MarkdownStyler.serif(14))).lineLimit(1).truncationMode(.middle)
                     Spacer(minLength: 0)
-                }.padding(.leading, showsIcon ? 14 : 3).padding(.trailing, 32).frame(height: 32)
+                }.padding(.leading, showsIcon ? 14 : 3).padding(.trailing, 62).frame(height: 32)
                     .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
             }.buttonStyle(.plain).focused($focused)
                 .accessibilityLabel("Pasta " + title).accessibilityIdentifier("folder:" + url.path)
             Button { model.togglePinnedFolder(url) } label: {
                 Image(systemName: model.folderIsPinned(url) ? "pin.fill" : "pin").font(.system(size: 12))
                     .frame(width: 28, height: 28).contentShape(Rectangle())
-            }.buttonStyle(.plain).foregroundStyle(.secondary).padding(.trailing, 6)
+            }.buttonStyle(.plain).foregroundStyle(.secondary).padding(.trailing, 33)
                 .opacity(pinVisible ? 1 : 0).allowsHitTesting(pinVisible).accessibilityHidden(!pinVisible)
                 .accessibilityLabel(model.folderIsPinned(url) ? "Desafixar pasta" : "Fixar pasta")
                 .accessibilityIdentifier("pin-folder:" + url.path)
+            Menu {
+                Menu("Abrir em") {
+                    Button("Nesta janela") { model.navigateFolder(url) }
+                    Button("Nova janela") { model.coordinator?.createWindow(in: url) }
+                }
+                LabelledPin(pinned: model.folderIsPinned(url)) { model.togglePinnedFolder(url) }
+                Button { model.movePanel(url) } label: { Label("Mover para…", systemImage: "folder") }
+                Divider()
+                Button(role: .destructive) { model.trashFile(url) } label: { Label("Apagar", systemImage: "trash") }
+            } label: { Image(systemName: "ellipsis").frame(width: 24, height: 28) }
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().padding(.trailing, 5)
+                .accessibilityLabel("Opções de " + title).accessibilityIdentifier("options:folder:" + url.path)
         }.background(selected ? Color.primary.opacity(0.07) : .clear)
             .onHover { hovered = $0 }
             .help(url.path)
             .contextMenu {
-                Button("Abrir pasta") { model.navigateFolder(url) }
-                Button(model.folderIsPinned(url) ? "Desafixar pasta" : "Fixar pasta") { model.togglePinnedFolder(url) }
-                Button("Novo documento aqui…") { model.createFile(in: url) }
-                Button("Mostrar no Finder") { NSWorkspace.shared.activateFileViewerSelecting([url]) }
+                Menu("Abrir em") {
+                    Button("Nesta janela") { model.navigateFolder(url) }
+                    Button("Nova janela") { model.coordinator?.createWindow(in: url) }
+                }
+                LabelledPin(pinned: model.folderIsPinned(url)) { model.togglePinnedFolder(url) }
+                Button { model.movePanel(url) } label: { Label("Mover para…", systemImage: "folder") }
+                Divider()
+                Button(role: .destructive) { model.trashFile(url) } label: { Label("Apagar", systemImage: "trash") }
             }
+    }
+}
+
+
+private struct LabelledPin: View {
+    let pinned: Bool
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) { Label(pinned ? "Desafixar" : "Fixar", systemImage: pinned ? "pin.slash" : "pin") }
+    }
+}
+
+/// The row menu is visible without requiring a right click. Rename edits the
+/// label itself and commits on Return or focus loss; Escape cancels it.
+private struct SidebarDocumentRow<Actions: View>: View {
+    let title: String
+    let icon: String
+    let identifier: String
+    let selected: Bool
+    let pinned: Bool
+    let muted: Bool
+    let open: (Bool) -> Void
+    let rename: (String) -> Bool
+    let pin: (() -> Void)?
+    @ViewBuilder let actions: () -> Actions
+    @ViewState private var renaming = false
+    @ViewState private var name = ""
+    @ViewState private var hovered = false
+    @FocusState private var nameFocused: Bool
+    var body: some View {
+        HStack(spacing: 0) {
+            if renaming {
+                HStack(spacing: 7) {
+                    Image(systemName: icon).font(.system(size: 12)).foregroundStyle(.secondary)
+                    TextField("Nome", text: $name).textFieldStyle(.plain).focused($nameFocused)
+                        .onSubmit { finishRename() }
+                        .onExitCommand { renaming = false }
+                        .accessibilityIdentifier("rename:" + identifier)
+                        .task { nameFocused = true }
+                }.padding(.leading, 14).frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Button { open((NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags).contains(.command)) } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: icon).font(.system(size: 12)).foregroundStyle(.secondary)
+                        Text(title).lineLimit(1).truncationMode(.middle)
+                        Spacer(minLength: 0)
+                    }.padding(.leading, 14).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityIdentifier(identifier)
+                    .accessibilityLabel(title).help("Duplo clique para renomear")
+                    .overlay(SidebarRowClick(open: open, rename: { name = title; renaming = true }))
+            }
+            if let pin {
+                Button(action: pin) {
+                    Image(systemName: pinned ? "pin.fill" : "pin").font(.system(size: 12)).frame(width: 24, height: 28)
+                }.buttonStyle(.plain).foregroundStyle(.secondary)
+                    .opacity(hovered || selected || pinned ? 1 : 0)
+                    .allowsHitTesting(hovered || selected || pinned).accessibilityHidden(!(hovered || selected || pinned))
+                    .accessibilityLabel(pinned ? "Desafixar" : "Fixar").accessibilityIdentifier("pin:" + identifier)
+                    .disabled(renaming)
+            }
+            Menu(content: actions) { Image(systemName: "ellipsis").frame(width: 24, height: 28) }
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                .accessibilityLabel("Opções de " + title).accessibilityIdentifier("options:" + identifier)
+                .disabled(renaming).padding(.trailing, 5)
+        }
+        .font(Font(MarkdownStyler.serif(14))).foregroundStyle(muted ? Color.secondary : Color.primary)
+        .frame(height: 32).frame(maxWidth: .infinity, alignment: .leading)
+        .background(selected ? Color.primary.opacity(0.07) : .clear)
+        .onHover { hovered = $0 }
+        .onChange(of: nameFocused) { _, focused in if !focused && renaming { finishRename() } }
+        .contextMenu { actions() }
+    }
+    private func finishRename() {
+        if rename(name) { renaming = false }
+        else { nameFocused = true }
     }
 }

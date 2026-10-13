@@ -37,6 +37,7 @@ final class AppModel {
     var searchRunning = false
     var searchWarning: String?
     var showingTrash = false
+    var showClosedDrafts = false
     var sidebarVisible: Bool {
         get { session.sidebarVisible ?? true }
         set { session.sidebarVisible = newValue }
@@ -122,11 +123,13 @@ final class AppModel {
     func setZoom(_ value: Double) { session.zoom = min(3, max(0.5, value)); persistSession() }
     var active: Draft? { drafts.first { $0.id == session.selectedID } }
     var visibleDrafts: [Draft] {
-        drafts.filter { $0.deletedAt == nil && matches($0) }.sorted {
+        let openIDs = Set(coordinator?.models.flatMap { $0.session.tabs } ?? session.tabs)
+        return drafts.filter { $0.visibleInSidebar(openIDs: openIDs) && matches($0) }.sorted {
             if $0.pinned != $1.pinned { return $0.pinned }
             return $0.modifiedAt > $1.modifiedAt
         }
     }
+    var hiddenDrafts: [Draft] { drafts.filter { $0.deletedAt == nil && $0.shouldPersist && $0.hiddenFromSidebar == true }.sorted { $0.modifiedAt > $1.modifiedAt } }
     var trash: [Draft] { drafts.filter { $0.deletedAt != nil && matches($0) }.sorted { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) } }
     var tabs: [Draft] { session.tabs.compactMap { id in drafts.first { $0.id == id } } }
     var hasUnsavedMemory: Bool { !uncommitted.isEmpty || library.sessionWriteFailed }
@@ -191,8 +194,12 @@ final class AppModel {
         }
         flushEditor()
         showingTrash = false
+        if var draft = drafts.first(where: { $0.id == id }), draft.hiddenFromSidebar != false {
+            draft.hiddenFromSidebar = false; _ = commit(draft)
+        }
         if !session.tabs.contains(id) {
             if !newTab, let old = session.selectedID, let index = session.tabs.firstIndex(of: old) {
+                hideFromSidebar(old)
                 session.tabs[index] = id
                 if let draft = drafts.first(where: { $0.id == old }), !draft.shouldPersist { drafts.removeAll { $0.id == old }; undoManagers.removeValue(forKey: old) }
             } else { session.tabs.append(id) }
@@ -212,6 +219,7 @@ final class AppModel {
     func closeTab(_ id: UUID) {
         flushEditor()
         coordinator?.rememberClosed(id, in: self)
+        hideFromSidebar(id)
         session.tabs.removeAll { $0 == id }
         if let draft = drafts.first(where: { $0.id == id }), !draft.shouldPersist {
             drafts.removeAll { $0.id == id }; undoManagers.removeValue(forKey: id)
@@ -359,12 +367,9 @@ final class AppModel {
         for draft in drafts where draft.deletedAt == nil && draft.sourcePath != nil {
             let state = FileService.diskState(for: draft)
             if state == .unchanged { diskStates.removeValue(forKey: draft.id); continue }
-            if !draft.isModified, case .changed = state, let path = draft.sourcePath {
+            if !draft.isModified, case .changed = state, draft.sourcePath != nil {
                 do {
-                    var updated = try FileService.open(URL(fileURLWithPath: path))
-                    updated.id = draft.id; updated.createdAt = draft.createdAt; updated.pinned = draft.pinned
-                    updated.selection = min(draft.selection, (updated.content as NSString).length)
-                    updated.scrollPosition = draft.scrollPosition
+                    let updated = try FileService.reload(draft)
                     if commit(updated, snapshot: Revision(draftID: draft.id, content: draft.content, reason: "Antes da alteração externa")) {
                         diskStates.removeValue(forKey: draft.id)
                     }
@@ -381,10 +386,9 @@ final class AppModel {
         refreshDiffOriginal()
     }
     func discardAndReload(_ id: UUID) {
-        guard let draft = drafts.first(where: { $0.id == id }), let path = draft.sourcePath else { return }
+        guard let draft = drafts.first(where: { $0.id == id }), draft.sourcePath != nil else { return }
         do {
-            var current = try FileService.open(URL(fileURLWithPath: path))
-            current.id = draft.id; current.createdAt = draft.createdAt; current.pinned = draft.pinned
+            let current = try FileService.reload(draft)
             if commit(current, snapshot: Revision(draftID: id, content: draft.content, reason: "Antes de descartar o rascunho")) {
                 diskStates.removeValue(forKey: id); conflict = nil
             }
@@ -402,7 +406,61 @@ final class AppModel {
     }
     func pin(_ id: UUID) {
         guard var draft = drafts.first(where: { $0.id == id }) else { return }
-        draft.pinned.toggle(); _ = commit(draft)
+        draft.pinned.toggle(); draft.hiddenFromSidebar = false; _ = commit(draft)
+    }
+    func hideFromSidebar(_ id: UUID) {
+        guard var draft = drafts.first(where: { $0.id == id }), draft.shouldPersist,
+              draft.deletedAt == nil, draft.hiddenFromSidebar != true else { return }
+        draft.hiddenFromSidebar = true; _ = commit(draft)
+    }
+    func draftForFile(_ url: URL) -> Draft? {
+        drafts.first { $0.deletedAt == nil && $0.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(url) } == true }
+    }
+    func toggleFilePin(_ url: URL) {
+        do {
+            let draft: Draft
+            if let existing = draftForFile(url) { draft = existing }
+            else { let opened = try FileService.open(url); guard commit(opened) else { return }; draft = opened }
+            pin(draft.id)
+        } catch { report(error) }
+    }
+    func openDraftInNewWindow(_ id: UUID) {
+        select(id); coordinator?.detachTab(id)
+    }
+    func openFileInNewWindow(_ url: URL) {
+        open(url)
+        if let draft = draftForFile(url) { coordinator?.detachTab(draft.id) }
+    }
+    @discardableResult func renameDraft(_ id: UUID, to name: String) -> Bool {
+        flushEditor(); coordinator?.owner(of: id)?.flushEditor()
+        guard var draft = drafts.first(where: { $0.id == id }) else { return false }
+        do {
+            let name = try FileService.validName(name)
+            if let path = draft.sourcePath { return renameFile(URL(fileURLWithPath: path), to: name) }
+            draft.displayName = name; return commit(draft)
+        } catch { report(error); return false }
+    }
+    @discardableResult func renameFile(_ url: URL, to name: String) -> Bool {
+        do { return move(url, to: try FileService.renamedDestination(for: url, name: name)) }
+        catch { report(error); return false }
+    }
+    func deleteDraft(_ id: UUID) {
+        guard let draft = drafts.first(where: { $0.id == id }) else { return }
+        if let path = draft.sourcePath, FileManager.default.fileExists(atPath: path) { trashFile(URL(fileURLWithPath: path)) }
+        else { trashDraft(id) }
+    }
+    func moveDraftPanel(_ id: UUID) {
+        flushEditor(); coordinator?.owner(of: id)?.flushEditor()
+        guard let draft = drafts.first(where: { $0.id == id }) else { return }
+        if let path = draft.sourcePath { movePanel(URL(fileURLWithPath: path)); return }
+        let panel = NSOpenPanel(); panel.canChooseFiles = false; panel.canChooseDirectories = true
+        panel.canCreateDirectories = true; panel.message = "Escolha a pasta para guardar e mover este documento."
+        guard panel.runModal() == .OK, let folder = panel.url else { return }
+        do {
+            let destination = folder.appendingPathComponent(try FileService.suggestedFilename(for: draft))
+            let saved = try FileService.save(draft, to: destination, assetsRoot: try requireStore().assetsRoot)
+            if commit(saved) { if let owner = coordinator?.owner(of: id) { owner.followActiveFolder(); owner.persistSession() }; refreshExpandedFolders() }
+        } catch { report(error) }
     }
     func trashDraft(_ id: UUID) {
         flushEditor()
@@ -478,30 +536,77 @@ final class AppModel {
         panel.canCreateDirectories = true; panel.message = "Escolha a pasta para mover este arquivo."
         if panel.runModal() == .OK, let folder = panel.url { move(url, to: folder.appendingPathComponent(url.lastPathComponent)) }
     }
-    private func move(_ source: URL, to target: URL) {
+    @discardableResult private func move(_ source: URL, to target: URL) -> Bool {
         flushEditor()
         do {
             let store = try requireStore()
-            let affected = drafts.filter { $0.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(source) } == true }
+            let isDirectory = (try source.resourceValues(forKeys: [.isDirectoryKey])).isDirectory == true
+            let key = FileService.documentKey(source)
+            let affected = drafts.filter { draft in
+                guard let path = draft.sourcePath else { return false }
+                let candidate = FileService.documentKey(URL(fileURLWithPath: path))
+                return candidate == key || (isDirectory && candidate.hasPrefix(key + "/"))
+            }
             for draft in affected { try store.save(draft) }
-            guard source != target else { return }
+            let relativePaths = Dictionary(uniqueKeysWithValues: affected.map { draft in
+                (draft.id, isDirectory ? String(FileService.documentKey(URL(fileURLWithPath: draft.sourcePath!)).dropFirst(key.count)) : "")
+            })
+            guard source != target else { return true }
             // Existing destinations are never overwritten by a rename or move.
-            try FileService.moveDocument(from: source, to: target, draftContents: affected.map(\.content))
+            if !isDirectory && FileService.isEditable(source) {
+                try FileService.moveDocument(from: source, to: target, draftContents: affected.map(\.content))
+            } else { try FileManager.default.moveItem(at: source, to: target) }
             for var draft in affected {
-                draft.sourcePath = target.path
-                draft.bookmark = try? target.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
+                let relative = relativePaths[draft.id] ?? ""
+                let updated = URL(fileURLWithPath: target.path + relative)
+                draft.sourcePath = updated.path
+                draft.bookmark = try? updated.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
                 _ = commit(draft)
             }
-            refreshExpandedFolders()
-        } catch { report(error) }
+            if isDirectory {
+                for index in session.folders.indices {
+                    let path = session.folders[index].path
+                    if path == source.path || path.hasPrefix(source.path + "/") {
+                        session.folders[index].path = target.path + String(path.dropFirst(source.path.count))
+                        session.folders[index].bookmark = try? URL(fileURLWithPath: session.folders[index].path).bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
+                    }
+                }
+                for model in coordinator?.models ?? [self] {
+                    if let path = model.currentFolder, path == source.path || path.hasPrefix(source.path + "/") {
+                        model.session.currentFolder = target.path + String(path.dropFirst(source.path.count))
+                    }
+                }
+                persistSession()
+            }
+            for model in coordinator?.models ?? [self] { model.refreshExpandedFolders() }
+            return true
+        } catch { report(error); return false }
     }
     func trashFile(_ url: URL) {
         flushEditor()
         let alert = NSAlert(); alert.messageText = "Enviar \(url.lastPathComponent) à Lixeira do Mac?"
-        alert.informativeText = "O arquivo real será movido à Lixeira do Mac. Rascunhos abertos ficam preservados no text-md."
+        let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+        alert.informativeText = isDirectory ? "A pasta e seus arquivos vão para a Lixeira do Mac. Os rascunhos saem da lateral e ficam na lixeira interna por 90 dias." : "O arquivo real vai para a Lixeira do Mac. Seu rascunho sai da lateral e fica recuperável na lixeira do text-md durante 90 dias."
         alert.addButton(withTitle: "Enviar à Lixeira"); alert.addButton(withTitle: "Cancelar")
         guard alert.runModal() == .alertFirstButtonReturn else { return }
-        do { try FileManager.default.trashItem(at: url, resultingItemURL: nil); refreshExpandedFolders(); checkDisk() }
+        do {
+            let key = FileService.documentKey(url)
+            let affected = drafts.filter { draft in
+                guard draft.deletedAt == nil, let path = draft.sourcePath else { return false }
+                let candidate = FileService.documentKey(URL(fileURLWithPath: path))
+                return candidate == key || (isDirectory && candidate.hasPrefix(key + "/"))
+            }.map(\.id)
+            try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+            for id in affected { trashDraft(id) }
+            if isDirectory {
+                session.folders.removeAll { $0.path == url.path || $0.path.hasPrefix(url.path + "/") }
+                for model in coordinator?.models ?? [self] {
+                    if let path = model.currentFolder, path == url.path || path.hasPrefix(url.path + "/") { model.session.currentFolder = url.deletingLastPathComponent().path }
+                }
+                persistSession()
+            }
+            for model in coordinator?.models ?? [self] { model.refreshExpandedFolders(); model.checkDisk() }
+        }
         catch { report(error) }
     }
     func insertImagePanel() {
