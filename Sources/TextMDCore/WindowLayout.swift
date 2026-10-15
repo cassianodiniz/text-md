@@ -13,11 +13,15 @@ public struct WindowState: Codable, Identifiable, Equatable {
     public var sidebarMode: SidebarMode?
     public var collapsedSections: [String]?
     public var sidebarVisible: Bool?
+    public var sidebarWidth: Double?
+    public var libraryVisible: Bool?
     public init(id: UUID = UUID(), session: SessionState = SessionState()) {
         self.id = id; tabs = session.tabs; selectedID = session.selectedID
         sourceMode = session.sourceMode; showLineNumbers = session.showLineNumbers; diffEnabled = session.diffEnabled
         currentFolder = session.currentFolder; sidebarMode = session.sidebarMode
         collapsedSections = session.collapsedSections; sidebarVisible = session.sidebarVisible
+        sidebarWidth = session.sidebarWidth
+        libraryVisible = session.libraryVisible
     }
     public func applying(to preferences: SessionState) -> SessionState {
         var value = preferences
@@ -25,7 +29,22 @@ public struct WindowState: Codable, Identifiable, Equatable {
         value.sourceMode = sourceMode; value.showLineNumbers = showLineNumbers; value.diffEnabled = diffEnabled
         value.currentFolder = currentFolder; value.sidebarMode = sidebarMode
         value.collapsedSections = collapsedSections; value.sidebarVisible = sidebarVisible
+        value.sidebarWidth = sidebarWidth
+        value.libraryVisible = libraryVisible
         return value
+    }
+}
+
+public struct ClosedWorkspaceItem: Codable, Identifiable, Equatable {
+    public enum Kind: String, Codable { case tab, window }
+    public var id: UUID
+    public var kind: Kind
+    public var window: WindowState
+    public var tabIndex: Int?
+    public var closedAt: Date
+    public init(kind: Kind, window: WindowState, tabIndex: Int? = nil, now: Date = Date()) {
+        id = UUID(); self.kind = kind; self.window = window
+        self.tabIndex = tabIndex; closedAt = now
     }
 }
 

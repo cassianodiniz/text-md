@@ -32,6 +32,12 @@ with tempfile.TemporaryDirectory(prefix='text-md-release-') as temporary:
         shutil.rmtree(bundle)
     for name in ('LICENSE', 'THIRD_PARTY_NOTICES.md'):
         shutil.copy2(root / name, resources / name)
+    # Dependency checkouts can supply read-only license files. Replace only the
+    # disposable bundle's license directory instead of overwriting those files.
+    if (resources / 'Licenses').exists():
+        shutil.rmtree(resources / 'Licenses')
+    shutil.copytree(root / 'Licenses', resources / 'Licenses')
+    shutil.copytree(root / 'Licenses', stage / 'Licenses')
     shutil.copy2(root / 'LICENSE', stage / 'LICENSE.txt')
     shutil.copy2(root / 'THIRD_PARTY_NOTICES.md', stage / 'THIRD_PARTY_NOTICES.md')
     shutil.copy2(root / 'Sources/TextMDCore/Resources/OPENAI-TOKENIZER-LICENSE.txt', stage / 'OPENAI-TOKENIZER-LICENSE.txt')

@@ -71,13 +71,25 @@ public final class DraftStore {
         return values.sorted { $0.modifiedAt > $1.modifiedAt }
     }
     public func save(_ draft: Draft, snapshot: Revision? = nil) throws {
+        try save(draft, snapshots: snapshot.map { [$0] } ?? [])
+    }
+    public func save(_ draft: Draft, snapshots: [Revision]) throws {
         guard draft.shouldPersist else { return }
         try transaction {
-            if let snapshot { try insertRevision(snapshot) }
+            for snapshot in snapshots { try insertRevision(snapshot) }
+            try upsert(draft)
+        }
+    }
+    private func upsert(_ draft: Draft) throws {
             let stmt = try statement("INSERT INTO drafts(id,json) VALUES (?,?) ON CONFLICT(id) DO UPDATE SET json=excluded.json;")
             defer { sqlite3_finalize(stmt) }
             bind(draft.id.uuidString, to: stmt, index: 1)
             try bind(draft, to: stmt, index: 2); try step(stmt)
+    }
+    public func saveClosing(_ drafts: [Draft], session: SessionState) throws {
+        try transaction {
+            for draft in drafts where draft.shouldPersist { try upsert(draft) }
+            try saveSession(session)
         }
     }
     private func insertRevision(_ revision: Revision) throws {
@@ -126,6 +138,23 @@ public final class DraftStore {
             try save(draft)
         }
     }
+    /// Keep every divergent legacy draft accessible instead of silently hiding
+    /// its placement behind another draft pointing at the same file.
+    public func recoverDuplicateSources() throws {
+        var seen = Set<String>()
+        let values = try allDrafts()
+        try transaction {
+            for var draft in values where draft.deletedAt == nil {
+                guard let path = draft.sourcePath else { continue }
+                guard !seen.insert(FileService.documentKey(URL(fileURLWithPath: path))).inserted else { continue }
+                draft.displayName = draft.title + " — recuperado"
+                draft.referenceBasePath = draft.referencePath
+                draft.sourcePath = nil; draft.baselineHash = nil; draft.bookmark = nil
+                draft.hasWrittenContent = true; draft.hiddenFromSidebar = false
+                try upsert(draft)
+            }
+        }
+    }
     public func saveSession(_ session: SessionState) throws {
         let stmt = try statement("INSERT INTO settings(id,json) VALUES ('session',?) ON CONFLICT(id) DO UPDATE SET json=excluded.json;")
         defer { sqlite3_finalize(stmt) }; try bind(session, to: stmt, index: 1); try step(stmt)
@@ -160,7 +189,43 @@ public final class DraftStore {
             if let id = session.selectedID, removed.contains(id) { session.selectedID = session.tabs.first }
             try saveSession(session)
         }
+        // Only app-owned, old, unreferenced media can expire. A fresh orphan may
+        // belong to an edit not yet committed, so it also receives the full grace period.
+        try collectUnusedAssets(olderThan: cutoff)
         return expired.map(\.id)
+    }
+    private func collectUnusedAssets(olderThan cutoff: Date) throws {
+        var texts = try allDrafts().map(\.content)
+        let stmt = try statement("SELECT json FROM revisions;")
+        defer { sqlite3_finalize(stmt) }
+        while true {
+            let status = sqlite3_step(stmt)
+            if status == SQLITE_DONE { break }
+            guard status == SQLITE_ROW else { throw error() }
+            texts.append(try decode(Revision.self, from: stmt).content)
+        }
+        let regex = try NSRegularExpression(pattern: "textmd-asset:([A-Za-z0-9._-]+)")
+        var used = Set<String>()
+        for text in texts {
+            let parsed = MarkdownAnalysis(text)
+            for reference in parsed.images + parsed.links where reference.destination.hasPrefix("textmd-asset:") {
+                if let url = try? FileService.assetURL(reference.destination, assetsRoot: assetsRoot) { used.insert(url.lastPathComponent) }
+            }
+            let ns = text as NSString
+            for match in regex.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
+                used.insert(ns.substring(with: match.range(at: 1)))
+            }
+        }
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: assetsRoot.path) else { return }
+        for file in try fm.contentsOfDirectory(at: assetsRoot, includingPropertiesForKeys: [.isRegularFileKey, .isSymbolicLinkKey, .contentModificationDateKey]) {
+            guard !used.contains(file.lastPathComponent), UUID(uuidString: file.deletingPathExtension().lastPathComponent) != nil,
+                  ["png", "jpg", "jpeg", "gif", "tiff", "webp", "heic"].contains(file.pathExtension.lowercased()) else { continue }
+            let values = try file.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .contentModificationDateKey])
+            guard values.isRegularFile == true, values.isSymbolicLink != true,
+                  let modified = values.contentModificationDate, modified < cutoff else { continue }
+            try fm.removeItem(at: file)
+        }
     }
     public var assetsRoot: URL { root.appendingPathComponent("assets", isDirectory: true) }
 }

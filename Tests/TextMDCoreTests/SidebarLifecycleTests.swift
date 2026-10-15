@@ -8,7 +8,7 @@ struct SidebarLifecycleTests {
         try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
         return path
     }
-    @Test func closedDraftSurvivesWithoutReturningToSidebar() throws {
+    @Test func closedDraftSurvivesAndRemainsInLibrary() throws {
         let folder = try root(); defer { try? FileManager.default.removeItem(at: folder) }
         var draft = Draft(content: "# Meu texto\n\nAinda não salvo em arquivo.")
         draft.displayName = "Postagem"; draft.hiddenFromSidebar = true
@@ -17,11 +17,11 @@ struct SidebarLifecycleTests {
         #expect(reopened.count == 1)
         #expect(reopened[0].content == draft.content)
         #expect(reopened[0].title == "Postagem")
-        #expect(!reopened[0].visibleInSidebar(openIDs: []))
+        #expect(reopened[0].visibleInSidebar(openIDs: []))
         var recovered = reopened[0]; recovered.hiddenFromSidebar = false
         #expect(recovered.visibleInSidebar(openIDs: []))
     }
-    @Test func migrationKeepsOpenAndPinnedButHidesOldClosedDocuments() throws {
+    @Test func legacyVisibilityFlagsDoNotHideStoredLibraryDocuments() throws {
         let folder = try root(); defer { try? FileManager.default.removeItem(at: folder) }
         let source = folder.appendingPathComponent("Original.md")
         let bytes = Data("# Original\n".utf8); try bytes.write(to: source)
@@ -43,7 +43,7 @@ struct SidebarLifecycleTests {
         try Data("# Alterado por fora\n".utf8).write(to: source)
         let updated = try FileService.reload(hidden)
         #expect(updated.hiddenFromSidebar == true)
-        #expect(!updated.visibleInSidebar(openIDs: []))
+        #expect(updated.visibleInSidebar(openIDs: []))
         #expect(updated.id == hidden.id)
     }
     @Test func filenameRenameMovesTheFileWithoutRewritingOrOverwritingIt() throws {

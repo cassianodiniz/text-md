@@ -50,8 +50,20 @@ struct WindowAttachment: NSViewRepresentable {
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var zoomMonitor: Any?
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.regular); NSApplication.shared.activate(ignoringOtherApps: true)
+        // The menu lists one action; the shifted plus key is an equivalent alias.
+        zoomMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            let handled = MainActor.assumeIsolated {
+                if event.modifierFlags.intersection(.deviceIndependentFlagsMask).subtracting([.shift, .capsLock]) == .command,
+                   event.characters == "+", let model = WindowCoordinator.shared.active {
+                    model.setZoom(Double(model.zoom) + 0.1); return true
+                }
+                return false
+            }
+            return handled ? nil : event
+        }
     }
     func application(_ application: NSApplication, open urls: [URL]) { WindowCoordinator.shared.open(urls) }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -82,14 +94,11 @@ struct EditorCommands: Commands {
             Button("Abrir pasta…") { coordinator.openPanel(folder: true) }.keyboardShortcut("o", modifiers: [.command, .shift])
         }
         CommandGroup(replacing: .saveItem) {
-            Button("Salvar") { model?.saveActive() }.keyboardShortcut("s").disabled(model?.active == nil)
-            Button("Salvar como cópia…") { model?.saveActive(asCopy: true) }.keyboardShortcut("s", modifiers: [.command, .shift]).disabled(model?.active == nil)
-        }
-        CommandGroup(replacing: .undoRedo) {
-            Button("Desfazer") { model?.undo() }.keyboardShortcut("z").disabled(model?.canUndo != true)
-            Button("Refazer") { model?.redo() }.keyboardShortcut("z", modifiers: [.command, .shift]).disabled(model?.canRedo != true)
+            Button("Salvar") { model?.saveActive() }.keyboardShortcut("s").disabled(model?.hasDocumentContext != true)
+            Button("Salvar como cópia…") { model?.saveActive(asCopy: true) }.keyboardShortcut("s", modifiers: [.command, .shift]).disabled(model?.hasDocumentContext != true)
         }
         CommandMenu("Formatar") {
+          Group {
             Button("Negrito") { model?.format(.bold) }.keyboardShortcut("b")
             Button("Itálico") { model?.format(.italic) }.keyboardShortcut("i")
             Button("Título") { model?.format(.heading) }.keyboardShortcut("h", modifiers: [.command, .option])
@@ -99,24 +108,27 @@ struct EditorCommands: Commands {
             Button("Código") { model?.format(.code) }
             Button("Tabela") { model?.format(.table) }
             Button("Imagem…") { model?.insertImagePanel() }
+          }.disabled(model?.hasDocumentContext != true)
         }
         CommandMenu("Texto") {
             Button(model?.session.sourceMode == true ? "Edição formatada" : "Mostrar Markdown") { model?.toggleSource() }
-                .keyboardShortcut("m", modifiers: [.command, .shift]).disabled(model?.diffEnabled == true)
+                .keyboardShortcut("m", modifiers: [.command, .shift]).disabled(model?.hasDocumentContext != true || model?.diffEnabled == true)
             Button("Números de linha") { model?.toggleLines() }.disabled(model?.session.sourceMode != true || model?.diffEnabled == true)
-            Button(model?.diffEnabled == true ? "Ocultar diff" : "Mostrar diff") { model?.toggleDiff() }.disabled(model?.active == nil)
+            Button(model?.diffEnabled == true ? "Ocultar diff" : "Mostrar diff") { model?.toggleDiff() }.disabled(model?.hasDocumentContext != true)
             Divider()
-            Button("Buscar nos textos") {
-                model?.sidebarVisible = true; model?.searchVisible = true
-                NotificationCenter.default.post(name: .textmdFocusSearch, object: model?.windowID)
-            }.keyboardShortcut("f", modifiers: [.command, .shift])
-            Button("Buscar neste texto") { model?.editor?.showFind() }.keyboardShortcut("f")
-            Button("Versões anteriores") { model?.showHistory() }.disabled(model?.active == nil)
+            Button("Buscar nos textos") { model?.focusSearch() }.keyboardShortcut("f", modifiers: [.command, .shift])
+            Button("Buscar neste texto") { model?.findInDocument() }.keyboardShortcut("f").disabled(model?.hasDocumentContext != true)
+            Button("Versões anteriores") { model?.showHistory() }.disabled(model?.hasDocumentContext != true)
         }
         CommandMenu("Abas") {
-            Button("Fechar aba") { if let model, let id = model.active?.id { model.closeTab(id) } }.keyboardShortcut("w")
+            Button("Fechar aba") {
+                if let model, model.hasDocumentContext, let id = model.active?.id { model.closeTab(id) }
+                else { model?.nativeWindow?.performClose(nil) }
+            }.keyboardShortcut("w")
             Button("Fechar janela") { model?.nativeWindow?.performClose(nil) }.keyboardShortcut("w", modifiers: [.command, .shift])
-            Button("Reabrir aba fechada") { coordinator.reopenClosed() }.keyboardShortcut("t", modifiers: [.command, .shift])
+            Button("Reabrir última aba ou janela fechada") { coordinator.reopenClosed() }
+                .keyboardShortcut("t", modifiers: [.command, .shift]).disabled(coordinator.closedItems.isEmpty)
+            Button("Restaurar última janela") { coordinator.restoreLastWindow() }.disabled(coordinator.lastClosedWindow == nil)
             Divider()
             Button("Próxima aba") { model?.switchTab(1) }.keyboardShortcut(.tab, modifiers: [.control])
             Button("Aba anterior") { model?.switchTab(-1) }.keyboardShortcut(.tab, modifiers: [.control, .shift])
@@ -127,11 +139,11 @@ struct EditorCommands: Commands {
             Button("Mover aba para nova janela") { if let id = model?.active?.id { coordinator.detachTab(id) } }
         }
         CommandMenu("Exibir") {
-            Button("Aumentar zoom") { model?.setZoom(Double(model?.zoom ?? 1) + 0.1) }.keyboardShortcut("+")
             Button("Aumentar zoom") { model?.setZoom(Double(model?.zoom ?? 1) + 0.1) }.keyboardShortcut("=")
             Button("Diminuir zoom") { model?.setZoom(Double(model?.zoom ?? 1) - 0.1) }.keyboardShortcut("-")
             Button("Tamanho original") { model?.setZoom(1) }.keyboardShortcut("0")
             Divider()
+            Button("Biblioteca") { model?.showLibrary() }
             Button("Mostrar ou ocultar lateral") { model?.sidebarVisible.toggle(); model?.persistSession() }.keyboardShortcut("l", modifiers: [.command, .shift])
         }
     }

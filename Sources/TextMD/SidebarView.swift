@@ -41,7 +41,7 @@ struct SidebarView: View {
                             Button("Documentos / rascunhos") { model.setSidebarMode(.documents) }
                             Divider()
                             Button("Abrir pasta…") { model.openFolderPanel() }
-                            Button("Recuperar fechados…") { model.showClosedDrafts = true }
+                            Button("Abas fechadas…") { model.showClosedDrafts = true }
                         } label: { Image(systemName: "ellipsis").frame(width: 24, height: 24) }
                             .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                             .accessibilityLabel("Navegação lateral").accessibilityIdentifier("sidebar-options")
@@ -56,7 +56,8 @@ struct SidebarView: View {
                         Text("NOS ARQUIVOS").font(.system(size: 10)).foregroundStyle(.secondary).padding(14)
                         if model.searchRunning { ProgressView().controlSize(.small).padding(12) }
                         ForEach(model.fileResults) { result in
-                            fileRow(FileNode(url: URL(fileURLWithPath: result.path), isDirectory: false))
+                            fileRow(FileNode(url: URL(fileURLWithPath: result.path), isDirectory: false),
+                                subtitle: URL(fileURLWithPath: result.path).deletingLastPathComponent().path, excerpt: result.excerpt)
                         }
                         if let warning = model.searchWarning { Text(warning).font(.system(size: 11)).foregroundStyle(.orange).padding(12) }
                     }
@@ -64,18 +65,20 @@ struct SidebarView: View {
             }
             Divider()
             HStack {
-                Button { model.flushEditor(); model.showingTrash = true } label: { Label("Lixeira", systemImage: "trash") }
+                Button { model.showLibrary() } label: { Label("Biblioteca", systemImage: "books.vertical") }
+                    .buttonStyle(.plain).foregroundStyle(model.showingLibrary && !model.showingTrash ? .primary : .secondary)
+                Spacer()
+                Button { model.enterTrash() } label: { Label("Lixeira", systemImage: "trash") }
                     .buttonStyle(.plain).foregroundStyle(model.showingTrash ? .primary : .secondary)
                 Spacer()
-                Button { model.newDraft() } label: { Image(systemName: "square.and.pencil") }
-                    .buttonStyle(.plain).help("Novo rascunho · ⌘T").accessibilityLabel("Novo rascunho")
             }.padding(14).font(.system(size: 12))
         }
         .background(Color(nsColor: MarkdownStyler.paperColor))
         .onChange(of: model.searchVisible) { _, visible in if visible { searchFocused = true } }
-        .onReceive(NotificationCenter.default.publisher(for: .textmdFocusSearch)) { notice in
-            guard let id = notice.object as? UUID, id == model.windowID else { return }
-            model.sidebarVisible = true; model.searchVisible = true; searchFocused = true
+        .task(id: model.searchFocusRequest) {
+            guard model.searchVisible else { return }
+            await Task.yield()
+            if !Task.isCancelled { searchFocused = true }
         }
     }
     private func sectionButton(_ title: String, key: String) -> some View {
@@ -114,7 +117,7 @@ struct SidebarView: View {
     }
     private func draftRow(_ draft: Draft) -> some View {
         SidebarDocumentRow(title: draft.title, icon: draft.sourcePath == nil ? "note.text" : "doc.text",
-            identifier: "draft:" + draft.id.uuidString, selected: model.session.selectedID == draft.id && !model.showingTrash,
+            identifier: "draft:" + draft.id.uuidString, selected: model.session.selectedID == draft.id && model.hasDocumentContext,
             pinned: draft.pinned, muted: false,
             open: { model.select(draft.id, newTab: $0) },
             rename: { model.renameDraft(draft.id, to: $0) }, pin: { model.pin(draft.id) }) {
@@ -129,11 +132,11 @@ struct SidebarView: View {
             Button(role: .destructive) { model.deleteDraft(draft.id) } label: { Label("Apagar", systemImage: "trash") }
         }
     }
-    private func fileRow(_ node: FileNode) -> some View {
+    private func fileRow(_ node: FileNode, subtitle: String? = nil, excerpt: String? = nil) -> some View {
         let selected = model.active?.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(node.url) } == true
         let pinned = model.draftForFile(node.url)?.pinned == true
         return SidebarDocumentRow(title: node.name, icon: node.isEditable ? "doc.text" : "doc",
-            identifier: "file:" + node.url.path, selected: selected, pinned: pinned, muted: !node.isEditable,
+            identifier: "file:" + node.url.path, selected: selected, pinned: pinned, muted: !node.isEditable, subtitle: subtitle, excerpt: excerpt,
             open: { model.open(node.url, newTab: $0) },
             rename: { model.renameFile(node.url, to: $0) }, pin: node.isEditable ? { model.toggleFilePin(node.url) } : nil) {
             Menu("Abrir em") {
@@ -227,6 +230,8 @@ private struct SidebarDocumentRow<Actions: View>: View {
     let selected: Bool
     let pinned: Bool
     let muted: Bool
+    var subtitle: String? = nil
+    var excerpt: String? = nil
     let open: (Bool) -> Void
     let rename: (String) -> Bool
     let pin: (() -> Void)?
@@ -250,13 +255,19 @@ private struct SidebarDocumentRow<Actions: View>: View {
                 Button { open((NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags).contains(.command)) } label: {
                     HStack(spacing: 7) {
                         Image(systemName: icon).font(.system(size: 12)).foregroundStyle(.secondary)
-                        Text(title).lineLimit(1).truncationMode(.middle)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(title).lineLimit(1).truncationMode(.middle)
+                            if let subtitle { Text(subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle) }
+                            if let excerpt, !excerpt.isEmpty { Text(excerpt).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1) }
+                        }
                         Spacer(minLength: 0)
                     }.padding(.leading, 14).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityIdentifier(identifier)
-                    .accessibilityLabel(title).help("Duplo clique para renomear")
-                    .overlay(SidebarRowClick(open: open, rename: { name = title; renaming = true }))
+                    .accessibilityLabel([title, subtitle, excerpt].compactMap { $0 }.joined(separator: ". "))
+                    .help(subtitle ?? "Duplo clique para renomear")
+                    .accessibilityAction(named: Text("Renomear")) { beginRename() }
+                    .overlay(SidebarRowClick(open: open, rename: { beginRename() }))
             }
             if let pin {
                 Button(action: pin) {
@@ -267,18 +278,19 @@ private struct SidebarDocumentRow<Actions: View>: View {
                     .accessibilityLabel(pinned ? "Desafixar" : "Fixar").accessibilityIdentifier("pin:" + identifier)
                     .disabled(renaming)
             }
-            Menu(content: actions) { Image(systemName: "ellipsis").frame(width: 24, height: 28) }
+            Menu { Button("Renomear") { beginRename() }; actions() } label: { Image(systemName: "ellipsis").frame(width: 24, height: 28) }
                 .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                 .accessibilityLabel("Opções de " + title).accessibilityIdentifier("options:" + identifier)
                 .disabled(renaming).padding(.trailing, 5)
         }
         .font(Font(MarkdownStyler.serif(14))).foregroundStyle(muted ? Color.secondary : Color.primary)
-        .frame(height: 32).frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: subtitle == nil ? 32 : (excerpt?.isEmpty == false ? 68 : 50)).frame(maxWidth: .infinity, alignment: .leading)
         .background(selected ? Color.primary.opacity(0.07) : .clear)
         .onHover { hovered = $0 }
         .onChange(of: nameFocused) { _, focused in if !focused && renaming { finishRename() } }
-        .contextMenu { actions() }
+        .contextMenu { Button("Renomear") { beginRename() }; actions() }
     }
+    private func beginRename() { name = title; renaming = true }
     private func finishRename() {
         if rename(name) { renaming = false }
         else { nameFocused = true }

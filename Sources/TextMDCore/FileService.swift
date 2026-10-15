@@ -101,14 +101,15 @@ public enum FileService {
                 } else if FileManager.default.fileExists(atPath: url.path), !overwriteCopy {
                     throw TextMDError.invalidDestination("Já existe um arquivo com esse nome. Escolha outro nome.")
                 }
-                if let original, original.deletingLastPathComponent().resolvingSymlinksInPath() != url.deletingLastPathComponent().resolvingSymlinksInPath() {
-                    try preserveRelativeImages(in: [draft.content], from: original, to: url)
+                if let base = draft.referencePath.map({ URL(fileURLWithPath: $0) }), base.deletingLastPathComponent().resolvingSymlinksInPath() != url.deletingLastPathComponent().resolvingSymlinksInPath() {
+                    try preserveRelativeImages(in: [draft.content], from: base, to: url)
                 }
                 let prepared = try exportAssets(in: draft.content, to: url, assetsRoot: assetsRoot)
                 let output = contentData(prepared, utf8BOM: draft.hasUTF8BOM == true)
                 try output.write(to: url, options: .atomic)
                 result.content = prepared
                 result.sourcePath = target.standardizedFileURL.path
+                result.referenceBasePath = nil
                 result.baselineHash = hash(output)
                 result.modifiedAt = Date()
                 result.bookmark = try? target.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
@@ -123,6 +124,9 @@ public enum FileService {
     /// local relative image dependencies to the same relative locations first.
     public static func moveDocument(from source: URL, to target: URL, draftContents: [String] = []) throws {
         let fm = FileManager.default
+        if (try source.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true {
+            throw TextMDError.invalidDestination("Este item é um atalho simbólico. Mova o arquivo real ou use o Finder para preservar o destino do atalho.")
+        }
         if fm.fileExists(atPath: target.path) {
             let sourceInfo = try fm.attributesOfItem(atPath: source.path)
             let targetInfo = try fm.attributesOfItem(atPath: target.path)
@@ -143,20 +147,19 @@ public enum FileService {
         let oldFolder = source.deletingLastPathComponent().resolvingSymlinksInPath()
         let newFolder = target.deletingLastPathComponent().resolvingSymlinksInPath()
         guard oldFolder != newFolder else { return }
-        let regex = try NSRegularExpression(pattern: "!\\[[^\\]]*\\]\\(<?([^)>]+)>?\\)")
         var copies: [URL: URL] = [:]
         for content in contents {
-            let ns = content as NSString
-            for match in regex.matches(in: content, range: NSRange(location: 0, length: ns.length)) {
-                let reference = ns.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
-                guard !reference.contains(":"), !reference.hasPrefix("/") else { continue }
-                let decoded = reference.removingPercentEncoding ?? reference
-                let image = oldFolder.appendingPathComponent(decoded).resolvingSymlinksInPath()
-                let destination = newFolder.appendingPathComponent(decoded).resolvingSymlinksInPath()
+            for reference in MarkdownAnalysis(content).images.map(\.destination) {
+                guard let components = URLComponents(string: reference), components.scheme == nil,
+                      components.host == nil, !components.path.hasPrefix("/"), !components.path.isEmpty else { continue }
+                let image = oldFolder.appendingPathComponent(components.path).resolvingSymlinksInPath()
+                let destination = newFolder.appendingPathComponent(components.path).resolvingSymlinksInPath()
                 guard image != destination, FileManager.default.fileExists(atPath: image.path) else { continue }
-                guard ["png", "jpg", "jpeg", "gif", "tif", "tiff", "webp", "heic", "svg", "pdf"].contains(image.pathExtension.lowercased()) else { continue }
                 guard destination.path.hasPrefix(newFolder.path + "/") else {
-                    throw TextMDError.invalidDestination("Uma imagem usa um caminho fora desta pasta. Para preservar suas referências, mantenha o documento na mesma pasta ou mova a pasta inteira pelo Finder.")
+                    throw TextMDError.invalidDestination("Uma imagem usa um caminho fora desta pasta. Mantenha o documento na mesma pasta ou mova a pasta inteira pelo Finder.")
+                }
+                guard (try image.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true else {
+                    throw TextMDError.invalidDestination("Uma referência de imagem não aponta para um arquivo. O documento foi preservado.")
                 }
                 if FileManager.default.fileExists(atPath: destination.path) {
                     guard try Data(contentsOf: image) == Data(contentsOf: destination) else {
@@ -187,14 +190,12 @@ public enum FileService {
         return assetsRoot.appendingPathComponent(name)
     }
     private static func exportAssets(in content: String, to target: URL, assetsRoot: URL) throws -> String {
-        let regex = try NSRegularExpression(pattern: "textmd-asset:([A-Za-z0-9._-]+)")
-        let ns = content as NSString
-        let matches = regex.matches(in: content, range: NSRange(location: 0, length: ns.length))
-        var result = content
+        let references = MarkdownAnalysis(content).images.filter { $0.destination.hasPrefix("textmd-asset:") }
+        var replacements: [NSRange: String] = [:]
         let folderName = target.deletingPathExtension().lastPathComponent + ".images"
         let folder = target.deletingLastPathComponent().appendingPathComponent(folderName, isDirectory: true)
-        for match in matches.reversed() {
-            let ref = ns.substring(with: match.range)
+        for reference in references {
+            let ref = reference.destination
             let source = try assetURL(ref, assetsRoot: assetsRoot)
             guard FileManager.default.fileExists(atPath: source.path) else { throw TextMDError.invalidAsset }
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -205,8 +206,19 @@ public enum FileService {
                 throw TextMDError.invalidDestination("Uma imagem com o mesmo nome já existe e tem conteúdo diferente.")
             }
             let relative = folderName + "/" + source.lastPathComponent
-            let safe = relative.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? relative
-            if let range = Range(match.range, in: result) { result.replaceSubrange(range, with: safe) }
+            let safe = relative.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed.subtracting(CharacterSet(charactersIn: "()"))) ?? relative
+            if let range = reference.destinationRange { replacements[range] = safe }
+            else {
+                // Unusual valid reference definitions may not expose a destination
+                // source range. Rewrite only this parsed image, never search literals.
+                let label = (content as NSString).substring(with: reference.label)
+                let title = reference.title.map { " \"" + $0.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"") + "\"" } ?? ""
+                replacements[reference.range] = "![" + label + "](" + safe + title + ")"
+            }
+        }
+        var result = content
+        for (range, value) in replacements.sorted(by: { $0.key.location > $1.key.location }) {
+            if let stringRange = Range(range, in: result) { result.replaceSubrange(stringRange, with: value) }
         }
         return result
     }

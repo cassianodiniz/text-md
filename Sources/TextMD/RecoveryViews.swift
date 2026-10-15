@@ -128,8 +128,13 @@ struct TrashView: View {
     let model: AppModel
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Button { model.leaveTrash() } label: { Label("Voltar ao editor", systemImage: "chevron.left") }
+                    .keyboardShortcut(.escape, modifiers: [])
+                Spacer()
+            }
             Text("Lixeira").font(.system(size: 34, design: .serif))
-            Text("Rascunhos ficam recuperáveis por 90 dias. Esta lixeira não apaga seus arquivos originais.")
+            Text("Rascunhos ficam recuperáveis por 90 dias. Arquivos apagados vão para a Lixeira do Mac. Restaurar aqui recupera somente o rascunho; não recria o arquivo original.")
                 .font(.system(size: 13)).foregroundStyle(.secondary)
             if model.trash.isEmpty {
                 ContentUnavailableView("A lixeira está vazia", systemImage: "trash")
@@ -141,7 +146,7 @@ struct TrashView: View {
                             Text(String(draft.content.prefix(130))).font(.system(size: 12)).foregroundStyle(.secondary).lineLimit(2)
                         }
                         Spacer()
-                        Button("Restaurar") { model.restoreTrash(draft.id) }
+                        Button("Restaurar rascunho") { model.restoreTrash(draft.id) }
                     }.padding(.vertical, 8)
                 }.listStyle(.inset)
             }
@@ -156,14 +161,14 @@ struct ClosedDraftsView: View {
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Documentos fechados").font(.system(size: 22, weight: .semibold))
-            Text("Eles ficam fora da lateral. Reabra somente o que quiser recuperar.").foregroundStyle(.secondary)
+            Text("Abas fechadas").font(.system(size: 22, weight: .semibold))
+            Text("Os rascunhos continuam na biblioteca. Reabra aqui uma aba fechada.").foregroundStyle(.secondary)
             List(model.hiddenDrafts) { draft in
                 HStack {
                     Text(draft.title).lineLimit(1)
                     Spacer()
                     Button("Reabrir") { model.select(draft.id); dismiss() }
-                    Button("Apagar", role: .destructive) { model.trashDraft(draft.id) }
+                    Button("Apagar", role: .destructive) { model.deleteDraft(draft.id) }
                 }
             }
             HStack { Spacer(); Button("Fechar") { dismiss() } }

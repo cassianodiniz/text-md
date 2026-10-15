@@ -50,7 +50,7 @@ struct DocumentTabs: View {
     }
 
     private func tab(_ draft: Draft) -> some View {
-        let selected = model.session.selectedID == draft.id
+        let selected = model.session.selectedID == draft.id && model.hasDocumentContext
         return ZStack(alignment: .trailing) {
             Button { model.select(draft.id) } label: {
                 HStack(spacing: 5) {

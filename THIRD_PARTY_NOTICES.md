@@ -16,6 +16,22 @@ e acompanha os recursos incorporados no aplicativo.
 
 Fonte: https://github.com/openai/tiktoken
 
+## Interpretação de Markdown
+
+Swift Markdown 0.5.0, do projeto Swift, interpreta a sintaxe CommonMark/GFM.
+É distribuído sob Apache License 2.0 com Runtime Library Exception. O texto
+integral está em [Licenses/SwiftMarkdown.txt](Licenses/SwiftMarkdown.txt).
+
+Fonte: https://github.com/swiftlang/swift-markdown/tree/0.5.0
+
+Seu componente swift-cmark 0.9.0 inclui os avisos BSD, MIT e demais atribuições
+descritos integralmente em [Licenses/SwiftCMark.txt](Licenses/SwiftCMark.txt).
+
+Fonte: https://github.com/swiftlang/swift-cmark/tree/0.9.0
+
+Esses textos acompanham o aplicativo em `Contents/Resources/Licenses`.
+A licença MIT do código do text-md permanece a mesma.
+
 ## Componentes do sistema
 
 AppKit, SwiftUI, Foundation, CryptoKit e SQLite são usados por meio das

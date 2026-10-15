@@ -6,11 +6,13 @@ localmente, como nas notas, e o original só muda ao salvar.
 
 ## Baixar e instalar
 
-Baixe o **[text-md 0.3.1 para Mac Apple Silicon](https://github.com/cassianodiniz/text-md/releases/tag/v0.3.1)**.
+A versão **0.3.2** inclui as [18 correções da auditoria](AUDIT_FIXES.md).
+
+Baixe o **[text-md 0.3.2 para Mac Apple Silicon](https://github.com/cassianodiniz/text-md/releases/tag/v0.3.2)**.
 O pacote requer macOS 14 ou posterior e um Mac com chip Apple (M1 ou posterior);
 não contém uma versão para Macs Intel.
 
-1. Baixe `text-md-0.3.1-macos-arm64.dmg` e abra o arquivo.
+1. Baixe `text-md-0.3.2-macos-arm64.dmg` e abra o arquivo.
 2. Arraste **text-md.app** para **Applications / Aplicativos**.
 3. Ejete a imagem e abra o app na pasta Aplicativos.
 
@@ -56,16 +58,16 @@ Cada item da lateral tem um menu **⋯** com **Abrir em**, **Fixar/Desafixar**,
 **Mover para…** abre o seletor de pasta; um rascunho ainda sem arquivo passa a ser
 um documento Markdown naquela pasta.
 
-Dê **duplo clique no nome** para renomear na própria lateral. **Enter** confirma,
+Dê **duplo clique no nome**, ou use **⋯ → Renomear**, para renomear na própria lateral. **Enter** confirma,
 **Esc** cancela. Em arquivos existentes, isso altera o nome real no disco e o nome
 da aba; a extensão é preservada quando você não digita outra. Rascunhos sem arquivo
 têm um nome próprio, que será usado ao salvá-los. O conteúdo não é reescrito pelo
 ato de renomear. Propriedades YAML não viram o título do rascunho.
 
-**Fechar uma aba retira o documento da lateral**, preservando seu texto para
-recuperação. Ele não volta automaticamente após reiniciar o app. Use
-**⋯ da seção → Recuperar fechados…** ou **⌘⇧T** para reabri-lo explicitamente.
-Encerrar o aplicativo com **⌘Q** continua preservando as abas que você deixou abertas.
+**Fechar uma aba com ⌘W mantém o rascunho na biblioteca e na lateral**. O ato
+fecha somente a visualização; não apaga texto nem modifica o arquivo original.
+**⌘⇧T** reabre a última aba ou janela fechada, inclusive após encerrar o app.
+Encerrar com **⌘Q** preserva as abas e janelas que você deixou abertas.
 Rascunhos novos vazios não aparecem na lateral, e o editor começa em branco,
 sem sugestões de escrita.
 
@@ -89,6 +91,12 @@ e seleciona a aba existente, inclusive para caminhos equivalentes.
 Todos os arquivos são listados. Os não editáveis ficam em cinza mais discreto e
 abrem no aplicativo padrão do Mac. Markdown, `.txt` e textos como `LICENSE` e
 `README` sem extensão são editáveis no text-md.
+
+Quando não há janelas abertas, clicar no Dock mostra a **Biblioteca**, sem criar
+um rascunho vazio. A ação **Restaurar última janela** recupera o conjunto de abas,
+a ordem, a seleção e a navegação. Se já há uma janela, o Dock a traz à frente,
+inclusive se estiver minimizada. Fechar a última janela mantém o processo aberto,
+como em outros aplicativos de documentos do Mac; **⌘Q** encerra o processo.
 
 Cada janela tem suas próprias abas e navegação. Rascunhos, fixados, tema,
 contadores e zoom são compartilhados. Arraste uma aba para reorganizar, movê-la
@@ -179,8 +187,10 @@ O app não oferece sincronização nem colaboração nesta versão.
 ## Desenvolvimento
 
 SwiftUI para a janela, AppKit para o editor e painéis, SQLite para persistência e
-CryptoKit para detectar alterações reais no original. Não há dependências
-remotas. Mínimo macOS 14; a versão foi executada neste Mac com macOS 26.7.1.
+CryptoKit para detectar alterações reais no original. A interpretação de Markdown
+usa Swift Markdown 0.5.0 e swift-cmark 0.9.0, com versões fixadas em
+`Package.resolved`. Essas dependências são baixadas para compilar; o aplicativo
+instalado funciona offline. Mínimo macOS 14.
 
 `scripts/build.py` compila e gera `build/text-md.app`; `scripts/test.py` executa os
 testes com Swift Testing. Os scripts lidam com o ambiente de Command Line Tools

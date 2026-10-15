@@ -18,6 +18,10 @@ public struct Draft: Codable, Identifiable, Equatable {
     public var hasWrittenContent: Bool?
     public var displayName: String?
     public var hiddenFromSidebar: Bool?
+    /// Resolution base for recovered copies, without granting permission to
+    /// overwrite or reload the file that originally supplied the draft.
+    public var referenceBasePath: String?
+    public var referencePath: String? { sourcePath ?? referenceBasePath }
 
     public init(id: UUID = UUID(), content: String = "", sourcePath: String? = nil,
                 baselineHash: String? = nil, now: Date = Date()) {
@@ -44,8 +48,9 @@ public struct Draft: Codable, Identifiable, Equatable {
         return "Sem título"
     }
     public func visibleInSidebar(openIDs: Set<UUID>) -> Bool {
-        guard deletedAt == nil, shouldPersist, hiddenFromSidebar != true else { return false }
-        return hiddenFromSidebar == false || pinned || openIDs.contains(id)
+        // A saved document belongs to the library independently of its tabs.
+        // Ignore the legacy visibility flag without deleting or rewriting its text.
+        deletedAt == nil && shouldPersist
     }
     public var isModified: Bool {
         guard let baselineHash else { return true }
@@ -96,6 +101,9 @@ public struct SessionState: Codable, Equatable {
     public var sidebarMode: SidebarMode?
     public var collapsedSections: [String]?
     public var sidebarVisible: Bool?
+    public var sidebarWidth: Double?
+    public var libraryVisible: Bool?
+    public var closedItems: [ClosedWorkspaceItem]?
     public init() {}
 }
 

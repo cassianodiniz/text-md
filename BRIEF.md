@@ -24,15 +24,15 @@ formatada do Typora e a persistência de rascunhos do Notas.
 - SwiftUI para a janela e AppKit para edição e painéis, conforme Build iOS Apps.
 - SQLite com transações e confirmação de gravação para recuperação após encerramento inesperado.
 - Compilar com Swift disponível neste Mac; Xcode completo não está instalado.
-- Projeto em `Skills/text-md`; biblioteca do usuário em Application Support/text-md.
+- Projeto em `~/Projetos/Apple Smart Apps/text-md`; biblioteca do usuário em Application Support/text-md.
 
 
 ## Revisão aprovada — 12/10/2026, horário de Brasília
 
 Evoluir o app existente com o Whitey instalado e os prints como referência.
 A mecânica segue editores nativos do Mac e navegadores; investigar padrões antes
-de propor escolhas novas. Tudo permanece neste Mac, sem envio ao GitHub,
-inclusive por hooks de commit.
+de propor escolhas novas. Código e distribuição autorizados no repositório público
+`cassianodiniz/text-md`, sob licença MIT. Não incluir biblioteca pessoal nos commits ou pacotes.
 
 - Ajustar fontes e espaçamentos da lateral, margens entre blocos e títulos e relevo/contorno das abas. Faixa contínua em toda a largura acima da lateral e do editor.
 - Propriedades YAML sem quebra de linha, com rolagem horizontal restrita ao bloco.
@@ -47,3 +47,15 @@ inclusive por hooks de commit.
 - Command+mais/menos/0 ajusta/restaura zoom dos documentos em todas as abas/janelas, lembrado ao reabrir. Controles mantêm o tamanho.
 - Preservar rascunhos separados dos originais, conflitos, histórico, imagens, Diff e contadores offline sem tempo de leitura.
 - Validar com bibliotecas e documentos temporários próprios; instalar no aplicativo existente sem perder os dados do usuário.
+
+
+## Contrato atual de fechamento — 15/10/2026
+
+Estas decisões substituem o comportamento anterior de ocultar documentos fechados:
+Command+W fecha só a aba e mantém o rascunho na biblioteca/lateral. Fechar janela
+preserva seu grupo de abas para restauração explícita. O Dock sem janelas mostra
+a Biblioteca, com ação Restaurar última janela; não cria rascunho vazio sozinho.
+Command+Q restaura na próxima execução as janelas/abas que ficaram abertas.
+Histórico de fechamento é durável e independente do conteúdo dos documentos.
+Nenhum original é modificado sem Salvar. Verificação e distribuição não podem
+abrir janelas/testes na tela nem encerrar a sessão de trabalho do usuário.

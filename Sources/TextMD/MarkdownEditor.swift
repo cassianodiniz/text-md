@@ -7,7 +7,19 @@ enum MarkdownAction { case bold, italic, heading, link, bullet, task, code, tabl
 struct MarkdownEditor: NSViewRepresentable {
     let draft: Draft
     let model: AppModel
-    func makeNSView(context: Context) -> NSScrollView {
+    final class Coordinator {
+        weak var model: AppModel?
+        init(_ model: AppModel) { self.model = model }
+    }
+    func makeCoordinator() -> Coordinator { Coordinator(model) }
+    func makeNSView(context: Context) -> NSScrollView { Self.scrollView(for: draft, model: model) }
+    static func scrollView(for draft: Draft, model: AppModel) -> NSScrollView {
+        if let scroll = model.library.editorScrollViews[draft.id], let editor = scroll.documentView as? MarkdownTextView {
+            editor.model = model
+            editor.configure(draft: draft, source: model.session.sourceMode, lineNumbers: model.session.showLineNumbers, diff: model.diffEnabled, original: model.originalForDiff, zoom: model.zoom)
+            model.editor = editor
+            return scroll
+        }
         let storage = NSTextStorage()
         let layout = MarkdownLayoutManager()
         let container = NSTextContainer(containerSize: NSSize(width: 800, height: CGFloat.greatestFiniteMagnitude))
@@ -43,7 +55,17 @@ struct MarkdownEditor: NSViewRepresentable {
         scroll.hasVerticalRuler = true
         editor.configure(draft: draft, source: model.session.sourceMode, lineNumbers: model.session.showLineNumbers, diff: model.diffEnabled, original: model.originalForDiff, zoom: model.zoom)
         model.editor = editor
+        model.library.editorScrollViews[draft.id] = scroll
         return scroll
+    }
+    static func dismantleNSView(_ scroll: NSScrollView, coordinator: Coordinator) {
+        guard let editor = scroll.documentView as? MarkdownTextView,
+              let owner = coordinator.model, editor.model === owner else { return }
+        editor.flush()
+        if owner.nativeWindow?.firstResponder === editor { owner.nativeWindow?.makeFirstResponder(nil) }
+        if owner.editor === editor { owner.editor = nil }
+        // Keep the document's TextKit instance and undo targets together while
+        // switching tabs, showing Trash or transferring to another window.
     }
     func updateNSView(_ scroll: NSScrollView, context: Context) {
         guard let editor = scroll.documentView as? MarkdownTextView else { return }
@@ -86,10 +108,10 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
     func configure(draft: Draft, source: Bool, lineNumbers: Bool, diff: Bool, original: String?, zoom: CGFloat) {
         let changedDocument = draftID != draft.id
         let modeChanged = sourceMode != (source || diff) || showingDiff != diff || diffOriginal != original
-        let pathChanged = documentPath != draft.sourcePath
+        let pathChanged = documentPath != draft.referencePath
         let zoomChanged = self.zoom != zoom
         self.zoom = zoom
-        sourceMode = source || diff; showingDiff = diff; diffOriginal = original; documentPath = draft.sourcePath
+        sourceMode = source || diff; showingDiff = diff; diffOriginal = original; documentPath = draft.referencePath
         enclosingScrollView?.rulersVisible = source && lineNumbers && !diff
         guard changedDocument || string != draft.content || modeChanged || pathChanged || zoomChanged else { return }
         configuring = true
@@ -113,9 +135,22 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
                     clip.scroll(to: NSPoint(x: 0, y: y)); self.enclosingScrollView?.reflectScrolledClipView(clip)
                 }
                 self.configuring = false
+                self.consumeAnchorRequest()
                 self.window?.makeFirstResponder(self)
             }
+        } else { consumeAnchorRequest() }
+    }
+    func consumeAnchorRequest() {
+        guard let request = model?.pendingAnchor, request.id == draftID else { return }
+        model?.pendingAnchor = nil
+        jumpToHeading(request.name)
+    }
+    func jumpToHeading(_ name: String) {
+        guard let offset = MarkdownAnalysis(string).headingOffset(for: name, in: string) else {
+            model?.errorMessage = "O título indicado pelo link não foi encontrado neste documento."; return
         }
+        let range = NSRange(location: offset, length: 0)
+        setSelectedRange(range); scrollRangeToVisible(range); positionChanged()
     }
     override var undoManager: UndoManager? {
         if let id = draftID { return model?.undoManager(for: id) }
@@ -244,7 +279,7 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
     }
     func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
         let reference = (link as? String) ?? (link as? URL)?.absoluteString ?? ""
-        if let url = FileService.linkedMarkdown(reference, from: documentPath) { model?.open(url); return true }
+        if model?.openMarkdownReference(reference) == true { return true }
         if let url = URL(string: reference), ["https", "http", "mailto"].contains(url.scheme?.lowercased() ?? "") { NSWorkspace.shared.open(url); return true }
         return true
     }
@@ -270,6 +305,11 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
     func flush() {
         guard !configuring, let id = draftID else { return }
         positionWork?.cancel()
+        if string == storedContent, let owner = model, let current = owner.drafts.first(where: { $0.id == id }), current.content != storedContent {
+            configure(draft: current, source: owner.session.sourceMode, lineNumbers: owner.session.showLineNumbers,
+                      diff: owner.diffEnabled, original: owner.originalForDiff, zoom: owner.zoom)
+            return
+        }
         let caret = selectedRange().location
         let scroll = Double(enclosingScrollView?.contentView.bounds.origin.y ?? 0)
         guard string != storedContent || caret != storedSelection || abs(scroll - storedScroll) > 1 else { return }
@@ -364,9 +404,10 @@ final class MarkdownTextView: NSTextView, NSTextViewDelegate {
             let glyph = layout.glyphIndex(for: local, in: container)
             let character = min(layout.characterIndexForGlyph(at: glyph), max(0, storage.length - 1))
             if storage.length > 0, let link = storage.attribute(.link, at: character, effectiveRange: nil),
-               let url = FileService.linkedMarkdown((link as? String) ?? "", from: documentPath),
+               let reference = link as? String,
+               (FileService.linkedMarkdown(reference, from: documentPath) != nil || (reference.hasPrefix("#"))),
                layout.boundingRect(forGlyphRange: NSRange(location: glyph, length: 1), in: container).insetBy(dx: -2, dy: -3).contains(local) {
-                model?.open(url); return
+                model?.openMarkdownReference(reference); return
             }
             if storage.length > 0, storage.attribute(.taskBox, at: character, effectiveRange: nil) != nil,
                local.x >= 0, local.x <= 22 * zoom {

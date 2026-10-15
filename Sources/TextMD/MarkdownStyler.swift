@@ -80,8 +80,7 @@ enum MarkdownStyler {
                 storage.addAttributes([.font: NSFont.systemFont(ofSize: 0.1), .foregroundColor: NSColor.clear, .spellingState: 0], range: range)
             }
         }
-        var inFence = false
-        var fenceMarker = ""
+        let analysis = MarkdownAnalysis(storage.string)
         var inFrontMatter = false
         var position = 0
         var previousHeading = 0
@@ -93,7 +92,7 @@ enum MarkdownStyler {
             let contentLength = (raw.trimmingCharacters(in: .newlines) as NSString).length
             let contentRange = NSRange(location: range.location, length: contentLength)
             defer { position = NSMaxRange(range) }
-            if trimmed.isEmpty && !isActive(range) && !inFence && !inFrontMatter {
+            if trimmed.isEmpty && !isActive(range) && !analysis.codeBlocks.contains(where: { NSIntersectionRange($0, range).length > 0 }) && !inFrontMatter {
                 let compact = NSMutableParagraphStyle(); compact.minimumLineHeight = 0.1; compact.maximumLineHeight = 0.1
                 storage.addAttributes([.font: NSFont.systemFont(ofSize: 0.1), .paragraphStyle: compact], range: range)
                 continue
@@ -118,23 +117,22 @@ enum MarkdownStyler {
                 else { mark(contentRange, parent: range) }
                 continue
             }
-            if trimmed.hasPrefix("```") || trimmed.hasPrefix("~~~") {
-                let token = String(trimmed.prefix(3))
-                if !inFence { inFence = true; fenceMarker = token }
-                else if token == fenceMarker { inFence = false }
-                storage.addAttributes([.font: NSFont.monospacedSystemFont(ofSize: 14, weight: .regular),
-                    .foregroundColor: NSColor.tertiaryLabelColor,
-                    .backgroundColor: NSColor.quaternaryLabelColor.withAlphaComponent(0.15)], range: range)
-                if !isActive(range) { mark(contentRange, parent: range) }
-                continue
-            }
-            if inFence || raw.hasPrefix("    ") || raw.hasPrefix("\t") {
+            if analysis.codeBlocks.contains(where: { NSIntersectionRange($0, range).length > 0 }) {
                 storage.addAttributes([.font: NSFont.monospacedSystemFont(ofSize: 14, weight: .regular),
                     .backgroundColor: NSColor.quaternaryLabelColor.withAlphaComponent(0.15)], range: range)
+                if analysis.codeMarkers.contains(where: { NSIntersectionRange($0, range).length > 0 }), !isActive(range) { mark(contentRange, parent: range) }
                 continue
             }
-            if let match = match("^(#{1,6})[ \\t]+", in: raw) {
-                let level = match.range(at: 1).length
+            if analysis.setextMarkers.contains(where: { NSIntersectionRange($0, range).length > 0 }) {
+                if !isActive(range) {
+                    mark(contentRange, parent: range)
+                    let compact = NSMutableParagraphStyle(); compact.minimumLineHeight = 1; compact.maximumLineHeight = 1
+                    storage.addAttribute(.paragraphStyle, value: compact, range: range)
+                }
+                continue
+            }
+            if let heading = analysis.headings.first(where: { NSIntersectionRange($0.inner, range).length > 0 }) {
+                let level = heading.level
                 let sizes: [CGFloat] = [57, 34.2, 30.4, 26.6, 22.8, 19]
                 var font = serif(sizes[level - 1])
                 if level == 3 { font = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask) }
@@ -152,7 +150,7 @@ enum MarkdownStyler {
                 storage.addAttributes([.font: font, .paragraphStyle: style], range: range)
                 if level == 2 { storage.addAttribute(.headingUnderline, value: true, range: contentRange) }
                 previousHeading = level
-                mark(NSRange(location: range.location, length: match.range.length), parent: range)
+                if let marker = match("^#{1,6}[ \\t]+", in: raw) { mark(NSRange(location: range.location, length: marker.range.length), parent: range) }
             } else { previousSpacing = 19; previousHeading = 0 }
             if let match = match("^([ \\t]*>[ \\t]?)", in: raw) {
                 storage.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: range)
@@ -176,8 +174,8 @@ enum MarkdownStyler {
                 storage.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor,
                     range: NSRange(location: range.location, length: list.range.length))
             }
-            if trimmed.hasPrefix("|") && trimmed.contains("|") {
-                let separator = trimmed.range(of: "^\\|?[ :|-]+\\|[ :|-]*$", options: .regularExpression) != nil
+            if analysis.tables.contains(where: { NSIntersectionRange($0, range).length > 0 }) {
+                let separator = analysis.tableSeparators.contains(where: { NSIntersectionRange($0, range).length > 0 })
                 let tableStyle = NSMutableParagraphStyle()
                 tableStyle.lineSpacing = 0; tableStyle.paragraphSpacing = 0
                 tableStyle.minimumLineHeight = separator && !isActive(range) ? 1 : 36
@@ -185,14 +183,8 @@ enum MarkdownStyler {
                 storage.addAttributes([.paragraphStyle: tableStyle, .font: NSFont.monospacedSystemFont(ofSize: 15, weight: .regular)], range: range)
                 if !isActive(range) {
                     mark(contentRange, parent: range)
-                    if !separator {
-                        let next = NSMaxRange(range) < text.length ? text.substring(with: text.lineRange(for: NSRange(location: NSMaxRange(range), length: 0))).trimmingCharacters(in: .whitespacesAndNewlines) : ""
-                        let header = next.range(of: "^\\|?[ :|-]+\\|[ :|-]*$", options: .regularExpression) != nil
-                        var cells = trimmed.replacingOccurrences(of: "\\|", with: "\u{E000}").components(separatedBy: "|")
-                        if cells.first?.isEmpty == true { cells.removeFirst() }
-                        if cells.last?.isEmpty == true { cells.removeLast() }
-                        cells = cells.map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "\u{E000}", with: "|") }
-                        storage.addAttribute(.tablePreview, value: TablePreview(cells: cells, header: header), range: contentRange)
+                    if let row = analysis.tableRows.first(where: { NSIntersectionRange($0.range, range).length > 0 }) {
+                        storage.addAttribute(.tablePreview, value: TablePreview(cells: row.cells, header: row.header), range: contentRange)
                     }
                 }
                 continue
@@ -201,62 +193,41 @@ enum MarkdownStyler {
                 storage.addAttribute(.horizontalRule, value: true, range: contentRange)
                 mark(contentRange, parent: range)
             }
-            if let image = match("!\\[([^\\]]*)\\]\\(([^)]+)\\)", in: raw),
-               let root = assetsRoot {
-                let ref = (raw as NSString).substring(with: image.range(at: 2))
-                if let url = imageURL(ref, documentPath: documentPath, assetsRoot: root),
-                   let preview = NSImage(contentsOf: url), preview.size.width > 0 {
-                    let targetWidth = min(max(120, width - 30), preview.size.width)
-                    let height = min(420, targetWidth * preview.size.height / preview.size.width)
-                    let style = paragraph.mutableCopy() as! NSMutableParagraphStyle
-                    style.paragraphSpacingBefore = height + 18
-                    storage.addAttributes([.paragraphStyle: style, .imagePreview: preview, .imageHeight: height], range: contentRange)
-                    if !isActive(range) { mark(contentRange, parent: range) }
-                }
-                continue
+            if let image = analysis.images.first(where: { NSIntersectionRange($0.range, range).length > 0 }),
+               let root = assetsRoot,
+               let url = imageURL(image.destination, documentPath: documentPath, assetsRoot: root),
+               let preview = NSImage(contentsOf: url), preview.size.width > 0 {
+                let targetWidth = min(max(120, width - 30), preview.size.width)
+                let height = min(420, targetWidth * preview.size.height / preview.size.width)
+                let style = paragraph.mutableCopy() as! NSMutableParagraphStyle
+                style.paragraphSpacingBefore = height + 18
+                storage.addAttributes([.paragraphStyle: style, .imagePreview: preview, .imageHeight: height], range: image.range)
+                if !isActive(range) { mark(image.range, parent: range) }
             }
-            for (pattern, trait) in [("(\\*\\*|__)(.+?)\\1", NSFontTraitMask.boldFontMask),
-                                      ("(?<!\\*)(\\*)([^*\\n]+)\\1(?!\\*)", .italicFontMask),
-                                      ("(?<!_)(_)([^_\\n]+)\\1(?!_)", .italicFontMask)] {
-                guard let regex = try? NSRegularExpression(pattern: pattern) else { continue }
-                for match in regex.matches(in: raw, range: NSRange(location: 0, length: (raw as NSString).length)) {
-                    let start = range.location + match.range.location
-                    let inner = NSRange(location: range.location + match.range(at: 2).location, length: match.range(at: 2).length)
-                    let font = storage.attribute(.font, at: inner.location, effectiveRange: nil) as? NSFont ?? serif(bodySize)
-                    storage.addAttribute(.font, value: NSFontManager.shared.convert(font, toHaveTrait: trait), range: inner)
-                    mark(NSRange(location: start, length: match.range(at: 1).length), parent: range)
-                    mark(NSRange(location: range.location + NSMaxRange(match.range) - match.range(at: 1).length,
-                                 length: match.range(at: 1).length), parent: range)
+            for inline in analysis.inlines where NSIntersectionRange(inline.range, range).length > 0 {
+                guard inline.inner.length > 0 else { continue }
+                switch inline.kind {
+                case "strong", "emphasis":
+                    let font = storage.attribute(.font, at: inline.inner.location, effectiveRange: nil) as? NSFont ?? serif(bodySize)
+                    storage.addAttribute(.font, value: NSFontManager.shared.convert(font, toHaveTrait: inline.kind == "strong" ? .boldFontMask : .italicFontMask), range: inline.inner)
+                case "strike": storage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: inline.inner)
+                case "code": storage.addAttributes([.font: NSFont.monospacedSystemFont(ofSize: 16, weight: .regular),
+                    .backgroundColor: NSColor.quaternaryLabelColor.withAlphaComponent(0.12)], range: inline.inner)
+                default: break
                 }
+                mark(NSRange(location: inline.range.location, length: inline.inner.location - inline.range.location), parent: range)
+                mark(NSRange(location: NSMaxRange(inline.inner), length: NSMaxRange(inline.range) - NSMaxRange(inline.inner)), parent: range)
             }
-            if let regex = try? NSRegularExpression(pattern: "`([^`\\n]+)`") {
-                for code in regex.matches(in: raw, range: NSRange(location: 0, length: (raw as NSString).length)) {
-                    let inner = NSRange(location: range.location + code.range(at: 1).location, length: code.range(at: 1).length)
-                    storage.addAttributes([.font: NSFont.monospacedSystemFont(ofSize: 16, weight: .regular),
-                        .backgroundColor: NSColor.quaternaryLabelColor.withAlphaComponent(0.12)], range: inner)
-                    mark(NSRange(location: range.location + code.range.location, length: 1), parent: range)
-                    mark(NSRange(location: range.location + NSMaxRange(code.range) - 1, length: 1), parent: range)
+            for link in analysis.links where NSIntersectionRange(link.range, range).length > 0 {
+                storage.addAttributes([.foregroundColor: linkColor, .link: link.destination], range: link.label)
+                mark(NSRange(location: link.range.location, length: link.label.location - link.range.location), parent: range)
+                mark(NSRange(location: NSMaxRange(link.label), length: NSMaxRange(link.range) - NSMaxRange(link.label)), parent: range)
+                if isActive(range), let destination = link.destinationRange {
+                    storage.addAttributes([.foregroundColor: linkColor.withAlphaComponent(0.6), .underlineStyle: NSUnderlineStyle.single.rawValue], range: destination)
                 }
             }
-            for link in linkRanges(raw) {
-                let label = NSRange(location: range.location + link.label.location, length: link.label.length)
-                let destination = (raw as NSString).substring(with: link.destination)
-                storage.addAttributes([.foregroundColor: linkColor, .link: destination], range: label)
-                mark(NSRange(location: range.location + link.whole.location, length: label.location - range.location - link.whole.location), parent: range)
-                mark(NSRange(location: NSMaxRange(label), length: range.location + NSMaxRange(link.whole) - NSMaxRange(label)), parent: range)
-                if isActive(range) {
-                    storage.addAttributes([.foregroundColor: linkColor.withAlphaComponent(0.6), .underlineStyle: NSUnderlineStyle.single.rawValue],
-                        range: NSRange(location: range.location + link.destination.location, length: link.destination.length))
-                }
-            }
-            if let regex = try? NSRegularExpression(pattern: "~~(.+?)~~") {
-                for strike in regex.matches(in: raw, range: NSRange(location: 0, length: (raw as NSString).length)) {
-                    let inner = NSRange(location: range.location + strike.range(at: 1).location, length: strike.range(at: 1).length)
-                    storage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: inner)
-                    mark(NSRange(location: range.location + strike.range.location, length: 2), parent: range)
-                    mark(NSRange(location: range.location + NSMaxRange(strike.range) - 2, length: 2), parent: range)
-                }
-            }
+            for escape in analysis.escapes where NSIntersectionRange(escape, range).length > 0 { mark(escape, parent: range) }
+
         }
     }
     private static func scaleAttributes(_ storage: NSTextStorage, by zoom: CGFloat) {
@@ -276,23 +247,6 @@ enum MarkdownStyler {
         }
         for (range, values) in changes { storage.addAttributes(values, range: range) }
     }
-    private struct LinkRanges { let whole: NSRange, label: NSRange, destination: NSRange }
-    private static func linkRanges(_ value: String) -> [LinkRanges] {
-        let ns = value as NSString
-        guard let regex = try? NSRegularExpression(pattern: "(?<!!|\\\\)\\[([^\\]]+)\\]\\(") else { return [] }
-        return regex.matches(in: value, range: NSRange(location: 0, length: ns.length)).compactMap { match in
-            var i = NSMaxRange(match.range), depth = 1
-            let start = i
-            while i < ns.length && depth > 0 {
-                let c = ns.character(at: i)
-                if c == 92 { i += 2; continue }
-                if c == 40 { depth += 1 }; if c == 41 { depth -= 1 }; i += 1
-            }
-            guard depth == 0 else { return nil }
-            return LinkRanges(whole: NSRange(location: match.range.location, length: i - match.range.location),
-                label: match.range(at: 1), destination: NSRange(location: start, length: i - start - 1))
-        }
-    }
     private static func match(_ pattern: String, in text: String) -> NSTextCheckingResult? {
         (try? NSRegularExpression(pattern: pattern))?.firstMatch(in: text, range: NSRange(location: 0, length: (text as NSString).length))
     }
@@ -305,7 +259,7 @@ enum MarkdownStyler {
         }
         // Local app: external URLs remain editable references and aren't fetched silently.
         if ref.contains("://") { return nil }
-        let decoded = ref.removingPercentEncoding ?? ref
+        let decoded = URLComponents(string: ref)?.path ?? (ref.removingPercentEncoding ?? ref)
         if decoded.hasPrefix("/") { return URL(fileURLWithPath: decoded) }
         guard let documentPath else { return nil }
         return URL(fileURLWithPath: documentPath).deletingLastPathComponent().appendingPathComponent(decoded)

@@ -23,6 +23,11 @@ resources = app / "Contents/Resources"
 macos.mkdir(parents=True, exist_ok=True)
 resources.mkdir(parents=True, exist_ok=True)
 shutil.copy2(products / "text-md", macos / "text-md")
+for notice in ("LICENSE", "THIRD_PARTY_NOTICES.md"):
+    shutil.copy2(root / notice, resources / notice)
+if (resources / "Licenses").exists():
+    shutil.rmtree(resources / "Licenses")
+shutil.copytree(root / "Licenses", resources / "Licenses")
 for bundle in products.glob("*.bundle"):
     if bundle.name.endswith("Tests.bundle"):
         continue
@@ -49,7 +54,7 @@ info = {
     "CFBundleName": "text-md", "CFBundleDisplayName": "text-md", "CFBundleExecutable": "text-md",
     "CFBundleIdentifier": "com.cassiano.text-md", "CFBundlePackageType": "APPL",
     "CFBundleIconFile": "AppIcon",
-    "CFBundleShortVersionString": "0.3.1", "CFBundleVersion": "5", "LSMinimumSystemVersion": "14.0",
+    "CFBundleShortVersionString": "0.3.2", "CFBundleVersion": "7", "LSMinimumSystemVersion": "14.0",
     "NSHighResolutionCapable": True, "NSPrincipalClass": "NSApplication", "CFBundleDevelopmentRegion": "pt_BR",
     "CFBundleLocalizations": ["pt_BR"],
     "CFBundleDocumentTypes": [{"CFBundleTypeName": "Markdown", "CFBundleTypeRole": "Editor",

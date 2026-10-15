@@ -10,11 +10,6 @@ struct FileNode: Identifiable {
     var name: String { url.lastPathComponent }
     var isEditable: Bool { FileService.isEditable(url) }
 }
-struct FileSearchResult: Identifiable {
-    let path: String
-    let excerpt: String
-    var id: String { path }
-}
 struct ConflictPresentation: Identifiable {
     let id: UUID
     let disk: DiskState
@@ -43,6 +38,40 @@ final class AppModel {
         set { session.sidebarVisible = newValue }
     }
     var searchVisible = false
+    var searchFocusRequest = 0
+    var pendingAnchor: (id: UUID, name: String)?
+    @ObservationIgnored private var sidebarSaveWork: DispatchWorkItem?
+    var sidebarWidth: Double { min(350, max(190, session.sidebarWidth ?? 245)) }
+    var showingLibrary: Bool { session.libraryVisible ?? (active == nil) }
+    var hasDocumentContext: Bool { !showingTrash && !showingLibrary && active != nil }
+    func showLibrary() {
+        flushEditor(); showingTrash = false; session.libraryVisible = true
+        session.sidebarMode = .documents; session.sidebarVisible = true
+        persistSession(); syncWindowTitle()
+    }
+    func syncWindowTitle() {
+        nativeWindow?.title = showingTrash ? "Lixeira — text-md" : showingLibrary ? "Biblioteca — text-md" : (active?.title ?? "text-md") + " — text-md"
+        nativeWindow?.representedURL = hasDocumentContext ? active?.sourcePath.map { URL(fileURLWithPath: $0) } : nil
+    }
+    func focusSearch() {
+        sidebarVisible = true; searchVisible = true; searchFocusRequest += 1
+        persistSession()
+    }
+    func setSidebarWidth(_ value: Double) {
+        let value = min(350, max(190, value))
+        guard abs(value - sidebarWidth) > 0.5 else { return }
+        session.sidebarWidth = value
+        sidebarSaveWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.persistSession() }
+        sidebarSaveWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: work)
+    }
+    func enterTrash() { flushEditor(); showingTrash = true; syncWindowTitle() }
+    func leaveTrash() {
+        showingTrash = false
+        if active == nil { session.libraryVisible = true }; syncWindowTitle()
+    }
+    func findInDocument() { guard hasDocumentContext else { return }; editor?.showFind() }
     var errorMessage: String?
     var conflict: ConflictPresentation?
     var history: HistoryPresentation?
@@ -52,7 +81,7 @@ final class AppModel {
         set { library.uncommitted = newValue }
     }
     var status = "Rascunhos guardados neste Mac"
-    var editor: MarkdownTextView?
+    @ObservationIgnored weak var editor: MarkdownTextView?
     var children: [String: [FileNode]] = [:]
     var folderErrors: [String: String] = [:]
     var counts = DocumentCounts(markdown: "", ignoreMarkdown: true)
@@ -83,7 +112,7 @@ final class AppModel {
             Task { @MainActor in self?.checkDisk(); self?.refreshExpandedFolders() }
         }
     }
-    func stopObserving() { pollTimer?.invalidate(); searchTask?.cancel(); tokenTask?.cancel() }
+    func stopObserving() { pollTimer?.invalidate(); searchTask?.cancel(); tokenTask?.cancel(); sidebarSaveWork?.cancel() }
     var zoom: CGFloat { CGFloat(min(3, max(0.5, session.zoom ?? 1))) }
     var sidebarMode: SidebarMode { session.sidebarMode ?? .documents }
     var currentFolder: String? { session.currentFolder }
@@ -129,7 +158,10 @@ final class AppModel {
             return $0.modifiedAt > $1.modifiedAt
         }
     }
-    var hiddenDrafts: [Draft] { drafts.filter { $0.deletedAt == nil && $0.shouldPersist && $0.hiddenFromSidebar == true }.sorted { $0.modifiedAt > $1.modifiedAt } }
+    var hiddenDrafts: [Draft] {
+        let openIDs = Set(coordinator?.models.flatMap { $0.session.tabs } ?? session.tabs)
+        return drafts.filter { $0.deletedAt == nil && $0.shouldPersist && !openIDs.contains($0.id) }.sorted { $0.modifiedAt > $1.modifiedAt }
+    }
     var trash: [Draft] { drafts.filter { $0.deletedAt != nil && matches($0) }.sorted { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) } }
     var tabs: [Draft] { session.tabs.compactMap { id in drafts.first { $0.id == id } } }
     var hasUnsavedMemory: Bool { !uncommitted.isEmpty || library.sessionWriteFailed }
@@ -146,6 +178,7 @@ final class AppModel {
     }
     func persistSession() { coordinator?.persist(from: self) }
     @discardableResult private func commit(_ draft: Draft, snapshot: Revision? = nil) -> Bool {
+        let previousPath = drafts.first { $0.id == draft.id }?.sourcePath
         if let index = drafts.firstIndex(where: { $0.id == draft.id }) { drafts[index] = draft }
         else { drafts.insert(draft, at: 0) }
         for model in coordinator?.models ?? [self] where draft.id == model.session.selectedID { model.refreshMeasurements() }
@@ -153,12 +186,25 @@ final class AppModel {
             status = "Escreva para guardar este rascunho"
             return true
         }
+        var snapshots = library.pendingSnapshots[draft.id] ?? []
+        if let snapshot, !snapshots.contains(where: { $0.id == snapshot.id }) { snapshots.append(snapshot) }
         do {
-            try requireStore().save(draft, snapshot: snapshot)
+            try requireStore().save(draft, snapshots: snapshots)
+            library.pendingSnapshots.removeValue(forKey: draft.id)
             uncommitted.remove(draft.id)
             status = "Rascunho guardado"
+            if let editor = library.editorScrollViews[draft.id]?.documentView as? MarkdownTextView,
+               editor.string != draft.content, let owner = editor.model {
+                editor.configure(draft: draft, source: owner.session.sourceMode, lineNumbers: owner.session.showLineNumbers,
+                                 diff: owner.diffEnabled, original: owner.originalForDiff, zoom: owner.zoom)
+            }
+            for model in coordinator?.models ?? [self] {
+                if draft.sourcePath != previousPath, model.active?.id == draft.id { model.followActiveFolder() }
+                model.syncWindowTitle()
+            }
             return true
         } catch {
+            library.pendingSnapshots[draft.id] = snapshots
             uncommitted.insert(draft.id)
             status = "Falha ao guardar — mantenha o app aberto"
             report(error); return false
@@ -188,18 +234,20 @@ final class AppModel {
         select(draft.id)
     }
     func select(_ id: UUID, newTab: Bool = true) {
+        flushEditor()
+        if coordinator?.routePendingDocument(id) == true { return }
         if let (owner, placedID) = coordinator?.placement(of: id), owner !== self || placedID != id {
             flushEditor(); owner.select(placedID); owner.nativeWindow?.deminiaturize(nil)
             owner.nativeWindow?.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return
         }
         flushEditor()
-        showingTrash = false
+        showingTrash = false; session.libraryVisible = false
         if var draft = drafts.first(where: { $0.id == id }), draft.hiddenFromSidebar != false {
             draft.hiddenFromSidebar = false; _ = commit(draft)
         }
         if !session.tabs.contains(id) {
             if !newTab, let old = session.selectedID, let index = session.tabs.firstIndex(of: old) {
-                hideFromSidebar(old)
+                guard preserveDraftForReplacement(old) else { return }
                 session.tabs[index] = id
                 if let draft = drafts.first(where: { $0.id == old }), !draft.shouldPersist { drafts.removeAll { $0.id == old }; undoManagers.removeValue(forKey: old) }
             } else { session.tabs.append(id) }
@@ -217,17 +265,8 @@ final class AppModel {
         loadChildren(session.currentFolder!)
     }
     func closeTab(_ id: UUID) {
-        flushEditor()
-        coordinator?.rememberClosed(id, in: self)
-        hideFromSidebar(id)
-        session.tabs.removeAll { $0 == id }
-        if let draft = drafts.first(where: { $0.id == id }), !draft.shouldPersist {
-            drafts.removeAll { $0.id == id }; undoManagers.removeValue(forKey: id)
-        }
-        if session.selectedID == id { session.selectedID = session.tabs.last; followActiveFolder() }
-        persistSession()
-        refreshMeasurements(); refreshDiffOriginal()
-        if session.tabs.isEmpty { nativeWindow?.performClose(nil) }
+        guard let coordinator else { return }
+        coordinator.closeTab(id, in: self)
     }
     func switchTab(_ delta: Int) {
         guard !session.tabs.isEmpty else { return }
@@ -238,9 +277,9 @@ final class AppModel {
         let index = number == 9 ? session.tabs.count - 1 : number - 1
         if session.tabs.indices.contains(index) { select(session.tabs[index]) }
     }
-    func toggleSource() { flushEditor(); session.sourceMode.toggle(); persistSession() }
+    func toggleSource() { guard hasDocumentContext else { return }; flushEditor(); session.sourceMode.toggle(); persistSession() }
     func toggleLines() { session.showLineNumbers.toggle(); persistSession() }
-    func toggleDiff() { flushEditor(); session.diffEnabled = !diffEnabled; refreshDiffOriginal(); persistSession() }
+    func toggleDiff() { guard hasDocumentContext else { return }; flushEditor(); session.diffEnabled = !diffEnabled; refreshDiffOriginal(); persistSession() }
     func setAppearance(_ value: EditorAppearance) { session.appearance = value; persistSession() }
     func setMetric(_ value: DocumentMetric, enabled: Bool) {
         var values = enabledMetrics.filter { $0 != value }
@@ -309,7 +348,23 @@ final class AppModel {
             if commit(draft) { select(draft.id, newTab: newTab); nativeWindow?.makeKeyAndOrderFront(nil) }
         } catch { report(error) }
     }
+    @discardableResult func openMarkdownReference(_ reference: String) -> Bool {
+        let components = URLComponents(string: reference)
+        if components?.scheme == nil, components?.path.isEmpty == true, let anchor = components?.fragment {
+            guard hasDocumentContext else { return false }
+            editor?.jumpToHeading(anchor); return true
+        }
+        guard let url = FileService.linkedMarkdown(reference, from: active?.referencePath) else { return false }
+        open(url)
+        if let anchor = components?.fragment, let draft = draftForFile(url) {
+            let owner = coordinator?.owner(of: draft.id) ?? self
+            owner.pendingAnchor = (draft.id, anchor)
+            if owner.editor?.draftID == draft.id { owner.editor?.consumeAnchorRequest() }
+        }
+        return true
+    }
     func saveActive(asCopy: Bool = false) {
+        guard hasDocumentContext else { return }
         flushEditor()
         guard let draft = active else { return }
         if asCopy || draft.sourcePath == nil { savePanel(draft, asCopy: asCopy); return }
@@ -334,23 +389,35 @@ final class AppModel {
             write(draft, destination: url, overwriteCopy: true)
         }
     }
-    private func write(_ draft: Draft, destination: URL?, overwriteCopy: Bool = false) {
+    @discardableResult func write(_ draft: Draft, destination: URL?, overwriteCopy: Bool = false) -> Bool {
         do {
             let store = try requireStore()
+            try validateSaveDestination(draft, destination: destination)
             // Persist before the filesystem write; failed exports leave a recoverable draft.
             let snapshot = Revision(draftID: draft.id, content: draft.content, reason: "Antes de salvar")
             try store.save(draft, snapshot: snapshot)
             let saved = try FileService.save(draft, to: destination, overwriteCopy: overwriteCopy, assetsRoot: store.assetsRoot)
-            guard commit(saved) else { return }
+            guard commit(saved) else { return false }
             diskStates.removeValue(forKey: draft.id); conflict = nil
             alertFingerprint.removeValue(forKey: draft.id)
             status = "Arquivo salvo · rascunho guardado"
             if let path = saved.sourcePath { navigateFolder(URL(fileURLWithPath: path).deletingLastPathComponent()) }
             refreshExpandedFolders()
             refreshDiffOriginal()
+            return true
         } catch {
             if case TextMDError.conflict = error { conflict = ConflictPresentation(id: draft.id, disk: FileService.diskState(for: draft)) }
             else { report(error) }
+            return false
+        }
+    }
+    func validateSaveDestination(_ draft: Draft, destination: URL?) throws {
+        guard let path = destination?.path ?? draft.sourcePath else { return }
+        let key = FileService.documentKey(URL(fileURLWithPath: path))
+        if drafts.contains(where: { other in
+            other.id != draft.id && other.deletedAt == nil && other.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == key } == true
+        }) {
+            throw TextMDError.invalidDestination("Este arquivo já tem um rascunho no text-md. Escolha outro nome para preservar os dois textos.")
         }
     }
     func checkDisk() {
@@ -394,7 +461,7 @@ final class AppModel {
             }
         } catch { report(error) }
     }
-    func showHistory() { flushEditor(); if let id = active?.id { history = HistoryPresentation(id: id) } }
+    func showHistory() { guard hasDocumentContext else { return }; flushEditor(); if let id = active?.id { history = HistoryPresentation(id: id) } }
     func revisions(for id: UUID) -> [Revision] {
         do { return try requireStore().revisions(for: id) } catch { report(error); return [] }
     }
@@ -408,10 +475,10 @@ final class AppModel {
         guard var draft = drafts.first(where: { $0.id == id }) else { return }
         draft.pinned.toggle(); draft.hiddenFromSidebar = false; _ = commit(draft)
     }
-    func hideFromSidebar(_ id: UUID) {
-        guard var draft = drafts.first(where: { $0.id == id }), draft.shouldPersist,
-              draft.deletedAt == nil, draft.hiddenFromSidebar != true else { return }
-        draft.hiddenFromSidebar = true; _ = commit(draft)
+    @discardableResult private func preserveDraftForReplacement(_ id: UUID) -> Bool {
+        guard var draft = drafts.first(where: { $0.id == id }), draft.shouldPersist else { return true }
+        draft.hiddenFromSidebar = false
+        return commit(draft)
     }
     func draftForFile(_ url: URL) -> Draft? {
         drafts.first { $0.deletedAt == nil && $0.sourcePath.map { FileService.documentKey(URL(fileURLWithPath: $0)) == FileService.documentKey(url) } == true }
@@ -458,6 +525,7 @@ final class AppModel {
         guard panel.runModal() == .OK, let folder = panel.url else { return }
         do {
             let destination = folder.appendingPathComponent(try FileService.suggestedFilename(for: draft))
+            try validateSaveDestination(draft, destination: destination)
             let saved = try FileService.save(draft, to: destination, assetsRoot: try requireStore().assetsRoot)
             if commit(saved) { if let owner = coordinator?.owner(of: id) { owner.followActiveFolder(); owner.persistSession() }; refreshExpandedFolders() }
         } catch { report(error) }
@@ -472,6 +540,14 @@ final class AppModel {
     }
     func restoreTrash(_ id: UUID) {
         guard var draft = drafts.first(where: { $0.id == id }) else { return }
+        let recoveredName = draft.title
+        if draft.sourcePath != nil {
+            // Restore a separate draft, never reattach an unrelated replacement
+            // or recreate an original that is still in the Mac Trash.
+            draft.referenceBasePath = draft.referencePath
+            draft.sourcePath = nil; draft.baselineHash = nil; draft.bookmark = nil
+            draft.displayName = recoveredName
+        }
         draft.deletedAt = nil; draft.modifiedAt = Date()
         draft.hasWrittenContent = true // An explicit recovery also preserves a blank.
         if commit(draft) { select(id) }
@@ -539,13 +615,26 @@ final class AppModel {
     @discardableResult private func move(_ source: URL, to target: URL) -> Bool {
         flushEditor()
         do {
+            guard !hasUnsavedMemory else { throw TextMDError.storage("Guarde as edições pendentes antes de mover ou renomear.") }
             let store = try requireStore()
+            guard (try source.resourceValues(forKeys: [.isSymbolicLinkKey])).isSymbolicLink != true else {
+                throw TextMDError.invalidDestination("Este item é um atalho simbólico. Mova o arquivo real ou use o Finder para preservar o destino do atalho.")
+            }
             let isDirectory = (try source.resourceValues(forKeys: [.isDirectoryKey])).isDirectory == true
             let key = FileService.documentKey(source)
             let affected = drafts.filter { draft in
+                guard draft.deletedAt == nil else { return false }
                 guard let path = draft.sourcePath else { return false }
                 let candidate = FileService.documentKey(URL(fileURLWithPath: path))
                 return candidate == key || (isDirectory && candidate.hasPrefix(key + "/"))
+            }
+            let affectedIDs = Set(affected.map(\.id)), destinationKey = FileService.documentKey(target)
+            if drafts.contains(where: { draft in
+                guard draft.deletedAt == nil, !affectedIDs.contains(draft.id), let path = draft.sourcePath else { return false }
+                let candidate = FileService.documentKey(URL(fileURLWithPath: path))
+                return candidate == destinationKey || (isDirectory && candidate.hasPrefix(destinationKey + "/"))
+            }) {
+                throw TextMDError.invalidDestination("O destino já pertence a outro rascunho guardado. Escolha outro nome para preservar os dois textos.")
             }
             for draft in affected { try store.save(draft) }
             let relativePaths = Dictionary(uniqueKeysWithValues: affected.map { draft in
@@ -610,6 +699,7 @@ final class AppModel {
         catch { report(error) }
     }
     func insertImagePanel() {
+        guard hasDocumentContext else { return }
         let panel = NSOpenPanel(); panel.allowedContentTypes = [.image]; panel.allowsMultipleSelection = true
         if panel.runModal() == .OK { for url in panel.urls { editor?.insertImage(url) } }
     }
@@ -621,34 +711,21 @@ final class AppModel {
         searchRunning = true
         searchTask = Task { [weak self] in
             do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
-            let output = await Task.detached(priority: .userInitiated) { () -> ([FileSearchResult], [String]) in
-                var found: [FileSearchResult] = []; var errors: [String] = []; var visited = Set<String>()
-                for path in paths {
-                    guard let iterator = FileManager.default.enumerator(at: URL(fileURLWithPath: path),
-                        includingPropertiesForKeys: [.isDirectoryKey, .isSymbolicLinkKey], options: [], errorHandler: { url, error in
-                            errors.append(url.lastPathComponent + ": " + error.localizedDescription); return true
-                        }) else { errors.append(path); continue }
-                    while let url = iterator.nextObject() as? URL {
-                        if [".git", ".build", "node_modules"].contains(url.lastPathComponent) { iterator.skipDescendants(); continue }
-                        if (try? url.resourceValues(forKeys: [.isSymbolicLinkKey]).isSymbolicLink) == true { iterator.skipDescendants() }
-                        guard ["md", "markdown"].contains(url.pathExtension.lowercased()), visited.insert(url.path).inserted else { continue }
-                        do {
-                            let text = try String(contentsOf: url, encoding: .utf8)
-                            if url.lastPathComponent.localizedStandardContains(query) || text.localizedStandardContains(query) {
-                                let line = text.components(separatedBy: .newlines).first { $0.localizedStandardContains(query) } ?? ""
-                                found.append(FileSearchResult(path: url.path, excerpt: String(line.prefix(160))))
-                            }
-                        } catch { errors.append(url.lastPathComponent + ": " + error.localizedDescription) }
-                    }
-                }
-                return (found.sorted { $0.path.localizedStandardCompare($1.path) == .orderedAscending }, errors)
-            }.value
+            let worker = Task.detached(priority: .userInitiated) { try FileSearch.scan(query: query, paths: paths) }
+            let output: (results: [FileSearchResult], errors: [String])
+            do {
+                output = try await withTaskCancellationHandler(operation: { try await worker.value }, onCancel: { worker.cancel() })
+            } catch is CancellationError { return }
+            catch { if !Task.isCancelled { self?.searchRunning = false; self?.report(error) }; return }
             guard !Task.isCancelled else { return }
-            self?.fileResults = output.0; self?.searchRunning = false
-            if !output.1.isEmpty { self?.searchWarning = "Alguns arquivos não puderam ser lidos: " + output.1.prefix(3).joined(separator: "; ") }
+            self?.fileResults = output.results; self?.searchRunning = false
+            if !output.errors.isEmpty { self?.searchWarning = "Alguns arquivos não puderam ser lidos: " + output.errors.prefix(3).joined(separator: "; ") }
         }
     }
-    func format(_ action: MarkdownAction) { editor?.format(action) }
+    func format(_ action: MarkdownAction) {
+        guard hasDocumentContext, editor?.draftID == active?.id else { return }
+        editor?.format(action)
+    }
     func retryGuarding() {
         flushEditor()
         for draft in drafts where uncommitted.contains(draft.id) { _ = commit(draft) }
@@ -657,21 +734,5 @@ final class AppModel {
     func undoManager(for id: UUID) -> UndoManager {
         if let manager = undoManagers[id] { return manager }
         let manager = UndoManager(); undoManagers[id] = manager; return manager
-    }
-    var canUndo: Bool {
-        guard let draft = active else { return false }
-        return undoManagers[draft.id]?.canUndo ?? false
-    }
-    var canRedo: Bool {
-        guard let draft = active else { return false }
-        return undoManagers[draft.id]?.canRedo ?? false
-    }
-    func undo() {
-        guard let editor, let draft = active, let manager = undoManagers[draft.id], manager.canUndo else { return }
-        editor.window?.makeFirstResponder(editor); manager.undo(); editor.flush()
-    }
-    func redo() {
-        guard let editor, let draft = active, let manager = undoManagers[draft.id], manager.canRedo else { return }
-        editor.window?.makeFirstResponder(editor); manager.redo(); editor.flush()
     }
 }
