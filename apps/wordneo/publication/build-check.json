@@ -1,0 +1,29 @@
+{
+  "candidate": "012",
+  "checked_utc": "2026-10-17T10:38:59.633840+00:00",
+  "result": "GUI and CLI release build completed from exported snapshot",
+  "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+  "host": "x86_64-pc-windows-gnu",
+  "command": "./build.ps1 -CargoPath <existing-cargo.exe> -TargetDirectory <existing-target-cache> -Offline",
+  "dependencies": "Cargo.lock, cached crates; no global installation",
+  "profile": {
+    "lto": "off",
+    "opt_level": 2,
+    "codegen_units": 16
+  },
+  "source_files012_verified": 96,
+  "powershell_scripts_ast_errors": 0,
+  "warning": "Windows icon/version resource compiler absent; executable build succeeded",
+  "private_documents_executed": false,
+  "corrections_resumed": false,
+  "full_suite_repeated": false,
+  "rebuild_sha256": {
+    "WordNeo.exe": "1cf4562e60cd5a99de585002223500ceaf4da00f503b91f4bd0c826c2dd1301b",
+    "WordNeo-cli.exe": "8eece4066a7e4dd1f9c5f0ac17b4e9cf7bc3beb14e953e1811a67fe963853481"
+  },
+  "original012_binary_hashes_preserved": {
+    "WordNeo.exe": "7c0996536d78041d0f5e2bcfbf09b9ac7536d86956c90ceb3720adc064e8b096",
+    "WordNeo-cli.exe": "cf373b7c30ebe8d484db8a4d9ddd980a034942df2a44c88be34dd14cdb13b57e"
+  },
+  "note": "Compiler/linker paths and timestamps can change binary hashes; this verifies candidate012 source identity and buildability, not bit-for-bit binary reproduction."
+}

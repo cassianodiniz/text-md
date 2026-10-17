@@ -1,4 +1,14 @@
-.build/
-build/
-.DS_Store
-*.xcuserstate
+# Build output and personal data
+**/.build/
+**/target/
+**/dist/
+**/build/
+**/data/
+**/.DS_Store
+**/*.xcuserstate
+/private/
+/documents/
+/testes-render/
+.env
+.env.*
+!.env.example

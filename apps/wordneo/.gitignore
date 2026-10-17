@@ -1,0 +1,20 @@
+*~
+plan/
+/target
+/dist
+/corpus
+/log
+.DS_Store
+/.claude/
+/target-*/
+/craft-fonts/
+
+# Local build output and user data
+/.build/
+/data/
+/private/
+/documents/
+/testes-render/
+.env
+.env.*
+!.env.example

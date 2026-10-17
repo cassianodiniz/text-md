@@ -1,0 +1,15 @@
+{
+  "files_checked": 615,
+  "text_md_original_git_identity_preserved": 60,
+  "wordneo_source_files012_unchanged": 96,
+  "private_document_or_media_matches": 0,
+  "private_paragraph_matches": 0,
+  "high_confidence_secret_pattern_matches": 0,
+  "forbidden_document_or_runtime_files": 0,
+  "text_md_python_scripts_ast": "passed",
+  "wordneo_cargo_metadata": "passed; offline/locked after move",
+  "wordneo_gui_cli_build": "passed in previous publication of identical012 source; no rebuild for relocation",
+  "text_md_macos_build": "not rerun on Windows; original sources, manifest and resources preserved",
+  "application_repairs_resumed": false,
+  "scope": "Directed consolidation checks, not a new functional or full security audit"
+}

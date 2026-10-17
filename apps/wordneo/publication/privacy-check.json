@@ -1,0 +1,11 @@
+{
+  "candidate": "012",
+  "files_checked": 556,
+  "private_input_count": 4,
+  "private_paragraph_checks": 21,
+  "private_document_or_media_matches": 0,
+  "private_paragraph_matches": 0,
+  "forbidden_documents_or_binaries": 0,
+  "high_confidence_secret_pattern_matches": 0,
+  "scope": "Published source and support files only; excludes Git metadata and ignored build output. This is a directed publication privacy check, not a security audit of all program behavior."
+}
